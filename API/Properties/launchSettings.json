@@ -1,0 +1,29 @@
+﻿{
+  "$schema": "https://json.schemastore.org/launchsettings.json",
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:52438",
+      "sslPort": 44331
+    }
+  },
+  "profiles": { 
+    "http": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "applicationUrl": "http://localhost:5286",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "DOMAIN_PATH": "",
+        "JWT_ISSUER": "CardPie",
+        "JWT_AUDIENCE": "CardPie",
+        "JWT_ACCESS_TOKEN_SECRET": "SXI3ZOFOKclSrticLeeHq81OBauR3cszI",
+        "JWT_ACCESS_TOKEN_EXPIRES": "525960",
+        "JWT_RESET_TOKEN_EXPIRES": "525960"
+      }
+    }
+  }
+}
