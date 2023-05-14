@@ -14,6 +14,8 @@ public class MainUnitOfWork : IDisposable
     
     public BaseRepository<User> UserRepository => new(_context);
     public BaseRepository<Token> TokenRepository => new(_context);
+    public BaseRepository<Deck> DeckRepository => new(_context);
+    public BaseRepository<FlashCard> FlashCardRepository => new(_context);
 
     public void Dispose()
     {
