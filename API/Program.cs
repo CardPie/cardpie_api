@@ -11,11 +11,12 @@ var builder = WebApplication.CreateBuilder(args);
 //
 builder.Services.AddDbContext<DatabaseContext>(options =>
 {
-    var connectString = EnvironmentExtension.GetAppConnectionString();
+    //var connectString = EnvironmentExtension.GetAppConnectionString();
+    var connectString = builder.Configuration.GetConnectionString("DefaultConnection");
     options.UseSqlServer(connectString,
         b =>
         {
-            b.MigrationsAssembly(Assembly.GetEntryAssembly()?.GetName().Name);
+           // b.MigrationsAssembly(Assembly.GetEntryAssembly()?.GetName().Name);
             b.CommandTimeout(1200);
         }
     );
