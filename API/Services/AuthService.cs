@@ -39,7 +39,7 @@ public class AuthService : BaseService, IAuthService
             throw new ApiException(MessageKey.AccountNotActivated, StatusCode.NOT_ACTIVE);
         
         // Check password
-        if (!accountCredentialLoginDto.Password.VerifyPassword<User>(user.Salt, user.Password))
+        if (!accountCredentialLoginDto.Password.VerifyPassword<User>(user.Salt!, user.Password!))
         {
             throw new ApiException("Invalid username or password", StatusCode.BAD_REQUEST);
         }
@@ -111,7 +111,7 @@ public class AuthService : BaseService, IAuthService
         token.RefreshExpiredAt = refreshExpiredAt;
         token.Status = TokenStatus.Active;
 
-        if (!await MainUnitOfWork.TokenRepository.UpdateAsync(token, account.Id, CurrentDate))
+        if (!await MainUnitOfWork.TokenRepository.UpdateAsync(token, account!.Id, CurrentDate))
             throw new ApiException(MessageKey.ServerError, StatusCode.SERVER_ERROR);
 
         // Update current device token for push notify

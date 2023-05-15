@@ -24,6 +24,8 @@ public class User : BaseEntity
     public virtual IEnumerable<Token> Tokens { get; set; } = new List<Token>();
 
     public virtual IEnumerable<Deck> Decks { get; set; } = new List<Deck>();
+    
+    public virtual IEnumerable<StudySession> StudySessions { get; set; } = new List<StudySession>();
 }
 
 public enum UserRole
@@ -52,5 +54,6 @@ public class UserConfig : IEntityTypeConfiguration<User>
         builder.Property(x => x.LastLoginAt).IsRequired(false);
         builder.HasMany(u => u.Tokens);
         builder.HasMany(u => u.Decks);
+        builder.HasMany(u => u.StudySessions);
     }
 }

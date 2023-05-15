@@ -13,6 +13,7 @@ public class Deck : BaseEntity
     
     //RelationShip
     public virtual IEnumerable<FlashCard> FlashCards { get; set; } = new List<FlashCard>();
+    public virtual IEnumerable<StudySession> StudySessions { get; set; } = new List<StudySession>();
 }
 
 public class DeckConfig : IEntityTypeConfiguration<Deck>
@@ -23,5 +24,6 @@ public class DeckConfig : IEntityTypeConfiguration<Deck>
         builder.Property(a => a.Name).IsRequired();
         builder.Property(a => a.Description).IsRequired();
         builder.HasMany(a => a.FlashCards);
+        builder.HasMany(a => a.StudySessions);
     }
 }

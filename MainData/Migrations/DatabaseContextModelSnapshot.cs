@@ -106,6 +106,59 @@ namespace MainData.Migrations
                     b.ToTable("FlashCards");
                 });
 
+            modelBuilder.Entity("MainData.Entities.StudySession", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("CorrectCount")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("CreatorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("CurrentCardIndex")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("DeckId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("EndTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("IncorrectCount")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsCompleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DeckId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("StudySessions");
+                });
+
             modelBuilder.Entity("MainData.Entities.Token", b =>
                 {
                     b.Property<Guid>("Id")
@@ -230,6 +283,25 @@ namespace MainData.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("MainData.Entities.StudySession", b =>
+                {
+                    b.HasOne("MainData.Entities.Deck", "Deck")
+                        .WithMany("StudySessions")
+                        .HasForeignKey("DeckId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MainData.Entities.User", "User")
+                        .WithMany("StudySessions")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Deck");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("MainData.Entities.Token", b =>
                 {
                     b.HasOne("MainData.Entities.User", null)
@@ -242,11 +314,15 @@ namespace MainData.Migrations
             modelBuilder.Entity("MainData.Entities.Deck", b =>
                 {
                     b.Navigation("FlashCards");
+
+                    b.Navigation("StudySessions");
                 });
 
             modelBuilder.Entity("MainData.Entities.User", b =>
                 {
                     b.Navigation("Decks");
+
+                    b.Navigation("StudySessions");
 
                     b.Navigation("Tokens");
                 });
