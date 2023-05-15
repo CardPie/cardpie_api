@@ -1,6 +1,7 @@
 ﻿using API.Dtos;
 using API.Services;
 using AppCore.Models;
+using MainData.Entities;
 using MainData.Middlewares;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -24,6 +25,13 @@ public class AuthController : BaseController
         return await _authenticationService.SignIn(accountCredentialLoginDto);
     }
     
+    [Authorize(new[] { UserRole.Admin, UserRole.Member})]
+    [HttpPost("sign-out")]
+    public async Task<ApiResponse> Logout()
+    {
+        return await _authenticationService.RevokeToken();
+    }
+    
     [HttpPost("refresh-token")]
     [AllowAnonymous]
     [SwaggerOperation("Refresh token")]
@@ -31,4 +39,4 @@ public class AuthController : BaseController
     {
         return await _authenticationService.RefreshToken(authRefreshDto);
     }
-}
+}   

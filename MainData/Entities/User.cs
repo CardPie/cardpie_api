@@ -15,6 +15,10 @@ public class User : BaseEntity
     public string? Username { get; set; }
     public string? Password { get; set; }
     public string? Salt { get; set; }
+    
+    public DateTime? FirstLoginAt { get; set; }
+    
+    public DateTime? LastLoginAt { get; set; }
 
     // RelationShip
     public virtual IEnumerable<Token> Tokens { get; set; } = new List<Token>();
@@ -42,8 +46,10 @@ public class UserConfig : IEntityTypeConfiguration<User>
         builder.Property(x => x.PhoneNumber).IsRequired(false);
         builder.Property(x => x.Address).IsRequired(false);
         builder.Property(x => x.Username).IsRequired().HasMaxLength(50);;
-        builder.Property(x => x.Password).IsRequired();
-        builder.Property(x => x.Salt).IsRequired();
+        builder.Property(x => x.Password).IsRequired(false);
+        builder.Property(x => x.Salt).IsRequired(false);
+        builder.Property(x => x.FirstLoginAt).IsRequired(false);
+        builder.Property(x => x.LastLoginAt).IsRequired(false);
         builder.HasMany(u => u.Tokens);
         builder.HasMany(u => u.Decks);
     }

@@ -13,6 +13,7 @@ public interface IAuthService : IBaseService
     Task<ApiResponse<AuthDto>> SignIn(AccountCredentialLoginDto accountCredentialLoginDto);
 
     Task<ApiResponse<AuthDto>> RefreshToken(AuthRefreshDto authRefreshDto);
+    Task<ApiResponse> RevokeToken();
 }
 
 public class AuthService : BaseService, IAuthService
@@ -126,7 +127,53 @@ public class AuthService : BaseService, IAuthService
             UserId = account.Id
         });
     }
-    
+
+    public async Task<ApiResponse> RevokeToken()
+    {
+        //Get token from header
+        var bearToken = string.Empty;
+        if (HttpContextAccessor.HttpContext != null)
+        {
+            bearToken = HttpContextAccessor.HttpContext.Request.Headers["Authorization"].FirstOrDefault()
+                ?.Split(" ").Last();
+        }
+
+        // Find token
+        var token = await MainUnitOfWork.TokenRepository.FindOneAsync(new Expression<Func<Token, bool>>[]
+        {
+            x => x.AccessToken == bearToken,
+            x => !x.DeletedAt.HasValue
+        });
+
+        //Find account 
+        var account = await MainUnitOfWork.UserRepository.FindOneAsync(new Expression<Func<User, bool>>[]
+        {
+            x => x.Id == token!.UserId,
+            x => !x.DeletedAt.HasValue
+        });
+
+        if (account == null || token == null)
+            throw new ApiException(MessageKey.TokenInCorrect, StatusCode.BAD_REQUEST);
+
+        // Update - delete token
+        token.AccessExpiredAt = CurrentDate;
+        token.RefreshExpiredAt = CurrentDate;
+
+        if (!(await MainUnitOfWork.TokenRepository.DeleteAsync(token, null, CurrentDate)))
+        {
+            throw new ApiException(MessageKey.ServerError, StatusCode.SERVER_ERROR);
+        }
+
+        // Update account
+        if (!(await MainUnitOfWork.UserRepository.UpdateAsync(account, account.Id, CurrentDate)))
+        {
+            throw new ApiException(MessageKey.ServerError, StatusCode.SERVER_ERROR);
+        }
+
+        return ApiResponse.Success();
+    }
+
+
     private IEnumerable<Claim> SetClaims(User account)
     {
         // Create token
