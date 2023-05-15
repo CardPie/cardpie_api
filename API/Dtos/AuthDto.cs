@@ -22,3 +22,8 @@ public class AuthDto
     public Guid UserId { get; set; }
     public bool IsFirstLogin { get; set; }
 }
+
+public class AuthRefreshDto
+{
+    [Required] public string RefreshToken { get; set; } = string.Empty;
+}

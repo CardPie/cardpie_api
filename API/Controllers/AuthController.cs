@@ -7,20 +7,28 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace API.Controllers;
 
-public class AuthenticationController : BaseController
+public class AuthController : BaseController
 {
     private readonly IAuthService _authenticationService;
 
-    public AuthenticationController(IAuthService authenticationService)
+    public AuthController(IAuthService authenticationService)
     {
         _authenticationService = authenticationService;
     }
 
-    [HttpPost]
+    [HttpPost("sign-in")]
     [AllowAnonymous]
     [SwaggerOperation("Login api")]
     public async Task<ApiResponse<AuthDto>> SignIn(AccountCredentialLoginDto accountCredentialLoginDto)
     {
         return await _authenticationService.SignIn(accountCredentialLoginDto);
+    }
+    
+    [HttpPost("refresh-token")]
+    [AllowAnonymous]
+    [SwaggerOperation("Refresh token")]
+    public async Task<ApiResponse<AuthDto>> SignIn(AuthRefreshDto authRefreshDto)
+    {
+        return await _authenticationService.RefreshToken(authRefreshDto);
     }
 }

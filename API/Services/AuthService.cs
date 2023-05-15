@@ -11,6 +11,8 @@ namespace API.Services;
 public interface IAuthService : IBaseService
 {
     Task<ApiResponse<AuthDto>> SignIn(AccountCredentialLoginDto accountCredentialLoginDto);
+
+    Task<ApiResponse<AuthDto>> RefreshToken(AuthRefreshDto authRefreshDto);
 }
 
 public class AuthService : BaseService, IAuthService
@@ -76,6 +78,53 @@ public class AuthService : BaseService, IAuthService
         };
         
         return ApiResponse<AuthDto>.Success(verifyResponse);
+    }
+
+    public async Task<ApiResponse<AuthDto>> RefreshToken(AuthRefreshDto authRefreshDto)
+    {
+        var token = await MainUnitOfWork.TokenRepository.FindOneAsync(new Expression<Func<Token, bool>>[]
+        {
+            t => t.RefreshToken == authRefreshDto.RefreshToken,
+            t => t.Type == TokenType.SignInToken
+        });
+
+        if (token == null)
+            throw new ApiException("Not found", StatusCode.NOT_FOUND);
+
+        var account = await MainUnitOfWork.UserRepository.FindOneAsync(token.UserId);
+        if (account != null && account.Status == UserStatus.InActive)
+            throw new ApiException("Not found", StatusCode.NOT_FOUND);
+
+        if (Math.Abs((token.AccessExpiredAt - CurrentDate).TotalMinutes) < 1)
+            throw new ApiException(MessageKey.TokenIsStillValid, StatusCode.BAD_REQUEST);
+
+        var claims = SetClaims(account!);
+        var accessExpiredAt = CurrentDate.AddMinutes(EnvironmentExtension.GetJwtAccessTokenExpires());
+        var refreshExpiredAt = CurrentDate.AddMinutes(EnvironmentExtension.GetJwtResetTokenExpires());
+        var accessToken = JwtExtensions.GenerateAccessToken(claims, accessExpiredAt);
+        var refreshToken = JwtExtensions.GenerateRefreshToken();
+
+        token.AccessToken = accessToken;
+        token.RefreshToken = refreshToken;
+        token.AccessExpiredAt = accessExpiredAt;
+        token.RefreshExpiredAt = refreshExpiredAt;
+        token.Status = TokenStatus.Active;
+
+        if (!await MainUnitOfWork.TokenRepository.UpdateAsync(token, account.Id, CurrentDate))
+            throw new ApiException(MessageKey.ServerError, StatusCode.SERVER_ERROR);
+
+        // Update current device token for push notify
+        return ApiResponse<AuthDto>.Success(new AuthDto
+        {
+            AccessExpiredAt = accessExpiredAt,
+            RefreshExpiredAt = refreshExpiredAt,
+            AccessToken = accessToken,
+            RefreshToken = refreshToken,
+            Email = account.Username,
+            Fullname = account.Fullname,
+            Role = account.Role,
+            UserId = account.Id
+        });
     }
     
     private IEnumerable<Claim> SetClaims(User account)
