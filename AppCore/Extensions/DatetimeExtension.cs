@@ -1,6 +1,4 @@
-﻿using Microsoft.IdentityModel.Tokens;
-
-namespace AppCore.Extensions;
+﻿namespace AppCore.Extensions;
 
 public static class DatetimeExtension
 {
