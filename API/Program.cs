@@ -10,8 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 //
 builder.Services.AddDbContext<DatabaseContext>(options =>
 {
-    // var connectString = EnvironmentExtension.GetAppConnectionString();
-    var connectString = builder.Configuration.GetConnectionString("DefaultConnection");
+     var connectString = EnvironmentExtension.GetAppConnectionString();
+    //var connectString = builder.Configuration.GetConnectionString("DefaultConnection");
 
     options.UseMySql(connectString, ServerVersion.AutoDetect(connectString), b =>
     {
