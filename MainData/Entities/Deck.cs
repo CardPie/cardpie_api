@@ -20,6 +20,7 @@ public class Deck : BaseEntity
     
     //RelationShip
     public virtual IEnumerable<FlashCard> FlashCards { get; set; } = new List<FlashCard>();
+    public virtual IEnumerable<StudySession> StudySessions { get; set; } = new List<StudySession>();
 }
 
 public enum SpacedRepetitionStrategy
@@ -53,5 +54,6 @@ public class DeckConfig : IEntityTypeConfiguration<Deck>
         builder.Property(a => a.SpacedRepetitionStrategyLevel).IsRequired()
             .HasDefaultValue(SpacedRepetitionStrategy.Normal);
         builder.HasMany(a => a.FlashCards);
+        builder.HasMany(a => a.StudySessions);
     }
 }
