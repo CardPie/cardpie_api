@@ -1,5 +1,6 @@
 using System.Reflection;
 using AppCore.Configs;
+using AppCore.Extensions;
 using MainData;
 using MainData.Middlewares;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
@@ -10,8 +11,8 @@ var builder = WebApplication.CreateBuilder(args);
 //
 builder.Services.AddDbContext<DatabaseContext>(options =>
 {
-    // var connectString = EnvironmentExtension.GetAppConnectionString();
-    var connectString = builder.Configuration.GetConnectionString("DefaultConnection");
+     var connectString = EnvironmentExtension.GetAppConnectionString();
+    //var connectString = builder.Configuration.GetConnectionString("DefaultConnection");
 
     options.UseMySql(connectString, ServerVersion.AutoDetect(connectString), b =>
     {
