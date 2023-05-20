@@ -16,7 +16,7 @@ public class StudySession : BaseEntity
     public bool IsCompleted { get; set; }
     
     //Relationship
-    //public virtual List<FlashCard> FlashCards { get; set; } = new List<FlashCard>();
+    public virtual List<FlashCard> FlashCards { get; set; } = new List<FlashCard>();
     public virtual Deck Deck { get; set; } = new Deck();
     public virtual User User { get; set; } = new User();
 }

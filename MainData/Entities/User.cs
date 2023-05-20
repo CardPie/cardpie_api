@@ -26,6 +26,8 @@ public class User : BaseEntity
     public virtual IEnumerable<Deck> Decks { get; set; } = new List<Deck>();
     
     public virtual IEnumerable<StudySession> StudySessions { get; set; } = new List<StudySession>();
+    
+    public virtual IEnumerable<Notification> Notifications { get; set; } = new List<Notification>();
 }
 
 public enum UserRole

@@ -6,19 +6,19 @@ using MainData.Middlewares;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.EntityFrameworkCore;
 
-var builder = WebApplication.CreateBuilder(args);
-
+var builder = WebApplication.CreateBuilder(new WebApplicationOptions()
+{
+    //Setting the status of deployment
+});
 //
 builder.Services.AddDbContext<DatabaseContext>(options =>
 {
-    // var connectString = EnvironmentExtension.GetAppConnectionString();
     var connectString = builder.Configuration.GetConnectionString("DefaultConnection");
 
     options.UseMySql(connectString, ServerVersion.AutoDetect(connectString), b =>
     {
-        b.CommandTimeout(1200);
     });
-}, ServiceLifetime.Transient);
+});
 
 //
 builder.Services.AddControllers();

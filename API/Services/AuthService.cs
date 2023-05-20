@@ -71,7 +71,7 @@ public class AuthService : BaseService, IAuthService
             RefreshExpiredAt = refreshExpiredAt,
             AccessToken = accessToken,
             RefreshToken = refreshToken,
-            Email = user .Username,
+            Email = user.Email,
             Fullname = user.Fullname,
             Role = user.Role,
             UserId = user.Id,
@@ -121,7 +121,7 @@ public class AuthService : BaseService, IAuthService
             RefreshExpiredAt = refreshExpiredAt,
             AccessToken = accessToken,
             RefreshToken = refreshToken,
-            Email = account.Username,
+            Email = account.Email,
             Fullname = account.Fullname,
             Role = account.Role,
             UserId = account.Id
