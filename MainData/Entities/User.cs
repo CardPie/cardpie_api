@@ -8,6 +8,7 @@ public class User : BaseEntity
 {
     public string? Fullname { get; set; }
     public UserRole Role { get; set; }
+    public string? Avatar { get; set; }
     public  UserStatus Status { get; set; }
     public string? Email { get; set; }
     public string? PhoneNumber { get; set; }
@@ -47,6 +48,7 @@ public class UserConfig : IEntityTypeConfiguration<User>
         builder.Property(x => x.Fullname).IsRequired(false);
         builder.Property(x => x.Role).IsRequired();
         builder.Property(x => x.Email).IsRequired(false);
+        builder.Property(x => x.Avatar).IsRequired(false);
         builder.Property(x => x.PhoneNumber).IsRequired(false);
         builder.Property(x => x.Address).IsRequired(false);
         builder.Property(x => x.Username).IsRequired().HasMaxLength(50);;
