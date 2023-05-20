@@ -17,7 +17,7 @@ public class FolderConfig : IEntityTypeConfiguration<Folder>
     public void Configure(EntityTypeBuilder<Folder> builder)
     {
         builder.Property(a => a.FolderName).IsRequired();
-        builder.HasMany(a => a.Decks).WithOne(a => a.Folder)
-            .HasForeignKey(x => x.FolderId);
+        /*builder.HasMany(a => a.Decks).WithOne(a => a.Folder)
+            .HasForeignKey(x => x.FolderId).OnDelete(DeleteBehavior.Cascade);*/
     }
 }

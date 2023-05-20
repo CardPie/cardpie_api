@@ -15,6 +15,24 @@ namespace MainData.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "Folders",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    FolderName = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    CreatorId = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
+                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Folders", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
@@ -57,7 +75,15 @@ namespace MainData.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Description = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
+                    IsPublic = table.Column<bool>(type: "tinyint(1)", nullable: false, defaultValue: false),
+                    Color = table.Column<int>(type: "int", nullable: false, defaultValue: 1),
+                    Order = table.Column<int>(type: "int", nullable: false, defaultValue: 1),
                     UserId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValue: new Guid("00000000-0000-0000-0000-000000000000"), collation: "ascii_general_ci"),
+                    RecallStrength = table.Column<int>(type: "int", nullable: true),
+                    ReminderTime = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    LearningLength = table.Column<int>(type: "int", nullable: true),
+                    SpacedRepetitionStrategyLevel = table.Column<int>(type: "int", nullable: false, defaultValue: 2),
+                    FolderId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     CreatorId = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
@@ -66,6 +92,12 @@ namespace MainData.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Decks", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Decks_Folders_FolderId",
+                        column: x => x.FolderId,
+                        principalTable: "Folders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Decks_Users_UserId",
                         column: x => x.UserId,
@@ -163,7 +195,7 @@ namespace MainData.Migrations
                         column: x => x.DeckId,
                         principalTable: "Decks",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_StudySessions_Users_UserId",
                         column: x => x.UserId,
@@ -172,6 +204,11 @@ namespace MainData.Migrations
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Decks_FolderId",
+                table: "Decks",
+                column: "FolderId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Decks_UserId",
@@ -213,6 +250,9 @@ namespace MainData.Migrations
 
             migrationBuilder.DropTable(
                 name: "Decks");
+
+            migrationBuilder.DropTable(
+                name: "Folders");
 
             migrationBuilder.DropTable(
                 name: "Users");

@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MainData.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20230517062532_u2")]
-    partial class u2
+    [Migration("20230520063024_u1")]
+    partial class u1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -46,13 +46,16 @@ namespace MainData.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<Guid>("FolderId")
+                        .HasColumnType("char(36)");
+
                     b.Property<bool>("IsPublic")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("tinyint(1)")
                         .HasDefaultValue(false);
 
-                    b.Property<TimeSpan?>("LearningLength")
-                        .HasColumnType("time(6)");
+                    b.Property<int?>("LearningLength")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -66,8 +69,8 @@ namespace MainData.Migrations
                     b.Property<int?>("RecallStrength")
                         .HasColumnType("int");
 
-                    b.Property<TimeSpan?>("ReminderTime")
-                        .HasColumnType("time(6)");
+                    b.Property<DateTime?>("ReminderTime")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("SpacedRepetitionStrategyLevel")
                         .ValueGeneratedOnAdd()
@@ -77,12 +80,15 @@ namespace MainData.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid?>("UserId")
+                        .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)")
                         .HasDefaultValue(new Guid("00000000-0000-0000-0000-000000000000"));
 
                     b.HasKey("Id");
+
+                    b.HasIndex("FolderId");
 
                     b.HasIndex("UserId");
 
@@ -133,6 +139,33 @@ namespace MainData.Migrations
                     b.HasIndex("DeckId");
 
                     b.ToTable("FlashCards");
+                });
+
+            modelBuilder.Entity("MainData.Entities.Folder", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<Guid?>("CreatorId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("FolderName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Folders");
                 });
 
             modelBuilder.Entity("MainData.Entities.StudySession", b =>
@@ -296,11 +329,19 @@ namespace MainData.Migrations
 
             modelBuilder.Entity("MainData.Entities.Deck", b =>
                 {
+                    b.HasOne("MainData.Entities.Folder", "Folder")
+                        .WithMany("Decks")
+                        .HasForeignKey("FolderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("MainData.Entities.User", null)
                         .WithMany("Decks")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Folder");
                 });
 
             modelBuilder.Entity("MainData.Entities.FlashCard", b =>
@@ -317,7 +358,7 @@ namespace MainData.Migrations
                     b.HasOne("MainData.Entities.Deck", "Deck")
                         .WithMany("StudySessions")
                         .HasForeignKey("DeckId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("MainData.Entities.User", "User")
@@ -345,6 +386,11 @@ namespace MainData.Migrations
                     b.Navigation("FlashCards");
 
                     b.Navigation("StudySessions");
+                });
+
+            modelBuilder.Entity("MainData.Entities.Folder", b =>
+                {
+                    b.Navigation("Decks");
                 });
 
             modelBuilder.Entity("MainData.Entities.User", b =>

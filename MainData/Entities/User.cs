@@ -52,8 +52,8 @@ public class UserConfig : IEntityTypeConfiguration<User>
         builder.Property(x => x.Salt).IsRequired(false);
         builder.Property(x => x.FirstLoginAt).IsRequired(false);
         builder.Property(x => x.LastLoginAt).IsRequired(false);
-        builder.HasMany(u => u.Tokens);
+        /*builder.HasMany(u => u.Tokens);
         builder.HasMany(u => u.Decks);
-        builder.HasMany(u => u.StudySessions);
+        builder.HasMany(u => u.StudySessions);*/
     }
 }

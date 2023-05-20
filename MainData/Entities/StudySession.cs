@@ -33,7 +33,7 @@ public class StudySessionConfig : IEntityTypeConfiguration<StudySession>
         builder.Property(a => a.CorrectCount).IsRequired();
         builder.Property(a => a.IncorrectCount).IsRequired();
         builder.Property(a => a.IsCompleted).IsRequired().HasDefaultValue(false);
-        builder.HasOne(x => x.Deck)
+        /*builder.HasOne(x => x.Deck)
             .WithMany(d => d.StudySessions)
             .HasForeignKey(a => a.DeckId)
             .OnDelete(DeleteBehavior.Restrict); // Specify Restrict behavior for this relationship
@@ -41,6 +41,6 @@ public class StudySessionConfig : IEntityTypeConfiguration<StudySession>
         builder.HasOne(a => a.User)
             .WithMany(u => u.StudySessions)
             .HasForeignKey(a => a.UserId)
-            .OnDelete(DeleteBehavior.Cascade); 
+            .OnDelete(DeleteBehavior.Cascade); */
     }
 }
