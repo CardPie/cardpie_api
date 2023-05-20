@@ -1,4 +1,5 @@
-﻿using AppCore.Models;
+﻿using AppCore.Attributes;
+using AppCore.Models;
 
 namespace API.Dtos;
 
@@ -7,7 +8,26 @@ public class FolderDto : BaseDto
     public string FolderName { get; set; } = string.Empty;
 }
 
+public class DetailFolderDto : BaseDto
+{
+    public string FolderName { get; set; } = string.Empty;
+    public List<DeckDto>? ListDeck { get; set; }
+}
+
+public class CreateFolder
+{
+    [Required(ErrorMessage = "Please insert folder name")]
+    public string FolderName { get; set; }
+    [Required(ErrorMessage = "Please choose the status")]
+    public bool IsPublic { get; set; }
+}
+
+public class UpdateFolder
+{
+    public string? FolderName { get; set; }
+    public bool? IsPublic { get; set; }
+}
+
 public class FolderQuery : BaseQueryDto
 {
-    
 }

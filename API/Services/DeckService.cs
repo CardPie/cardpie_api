@@ -25,7 +25,7 @@ public class DeckService : BaseService, IDeckService
         var decks = await MainUnitOfWork.DeckRepository.FindResultAsync<DeckDto>(new Expression<Func<Deck, bool>>[]
         {
             x => !x.DeletedAt.HasValue,
-            x => x.UserId == AccountId
+            x => x.IsPublic
         }, deckQueryDto.OrderBy, deckQueryDto.Skip(), deckQueryDto.PageSize);
 
         return ApiResponses<DeckDto>.Success(
@@ -42,7 +42,8 @@ public class DeckService : BaseService, IDeckService
         var deckDto = await MainUnitOfWork.DeckRepository.FindOneAsync<DetailDeckDto>(new Expression<Func<Deck, bool>>[]
         {
             x => !x.DeletedAt.HasValue,
-            x => x.Id == deckId
+            x => x.Id == deckId,
+            x => x.IsPublic
         });
 
         if (deckDto == null)
