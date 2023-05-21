@@ -36,4 +36,11 @@ public class FlashCardController : BaseController
     {
         return await _flashCardService.CreateCard(createFlashCardDto);
     }
+    
+    [SwaggerOperation("Update flashcard")]
+    [HttpPut("{id:guid}")]
+    public async Task<ApiResponse<DetailFlashCardDto>> UpdateFlashCard(Guid id, UpdateFlashCardDto updateFlashCardDto)
+    {
+        return await _flashCardService.UpdateFlashCard(id, updateFlashCardDto);
+    }
 }

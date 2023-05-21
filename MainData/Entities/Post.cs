@@ -15,9 +15,9 @@ public class Post : BaseEntity
     public PostType Type { get; set; }
     
     //Relationship
-    public virtual IEnumerable<Interaction> Interactions { get; set; } = new List<Interaction>();
+    /*public virtual IEnumerable<Interaction> Interactions { get; set; } = new List<Interaction>();
     public virtual User User { get; set; } = new User();
-    public Deck? Deck { get; set; } = new Deck();
+    public Deck? Deck { get; set; } = new Deck();*/
 }
 
 public enum PostType

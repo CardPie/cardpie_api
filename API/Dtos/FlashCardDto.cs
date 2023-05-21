@@ -47,6 +47,20 @@ public class CreateFlashCardDto
     public string? ImageUrlBack { get; set; }
 }
 
+public class UpdateFlashCardDto
+{
+    public string? Title { get; set; } 
+    public string? Content { get; set; } 
+    public string? SoundUrl { get; set; }
+    public string? ImageUrl { get; set; } 
+    public string? TitleBackOne { get; set; }
+    public string? ContentBackOne { get; set; } 
+    public string? TitleBackTwo { get; set; } 
+    public string? ContentBackTwo { get; set; } 
+    public string? SoundUrlBack { get; set; } 
+    public string? ImageUrlBack { get; set; }
+}
+
 public class FlashCardQueryDto : BaseQueryDto
 {
     

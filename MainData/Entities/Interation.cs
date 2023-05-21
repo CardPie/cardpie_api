@@ -12,8 +12,8 @@ public class Interaction : BaseEntity
     public string? Content { get; set; }
     
     //Relationship
-    public virtual Post Post { get; set; } = new Post();
-    public virtual User User { get; set; } = new User();
+    /*public virtual Post Post { get; set; } = new Post();
+    public virtual User User { get; set; } = new User();*/
 }
 
 public enum InteractionType

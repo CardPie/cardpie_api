@@ -49,6 +49,23 @@ public class CreateDeckDto
     public List<CreateFlashCardWithDeckDto> ListFlashCards { get; set; } = new List<CreateFlashCardWithDeckDto>();
 }
 
+public class UpdateDeckDto
+{
+    public Guid? FolderId { get; set; }
+    public string? Name { get; set; }
+    public string? Description { get; set; }
+    public bool? IsPublic { get; set; }
+    public DeckColor? Color { get; set; }
+    public DeckOrder? Order { get; set; }
+    public int? RecallStrength { get; set; }
+    public DateTime? ReminderTime { get; set; }
+    public int? LearningLength { get; set; }
+    public bool? IsDailyRemind { get; set; }
+    public string? WeeklyReminderDays { get; set; }
+    public SpacedRepetitionStrategy? SpacedRepetitionStrategyLevel { get; set; }
+}
+
+
 public class CreateFlashCardWithDeckDto
 {
     [Required] public string Title { get; set; } 

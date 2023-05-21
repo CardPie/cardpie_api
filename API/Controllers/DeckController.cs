@@ -22,6 +22,13 @@ public class DeckController : BaseController
         return await _deckService.GetDecks(deckQueryDto);
     }
     
+    [SwaggerOperation("Get deck of current logged in account")]
+    [HttpGet("own")]
+    public async Task<ApiResponses<DeckDto>> GetOwnDecks([FromQuery]DeckQueryDto deckQueryDto)
+    {
+        return await _deckService.GetOwnDeck(deckQueryDto);
+    }
+    
     [SwaggerOperation("Get detail deck")]
     [HttpGet("{deckId:guid}")]
     public async Task<ApiResponse<DetailDeckDto>> GetDeckDetail(Guid deckId)
@@ -34,5 +41,12 @@ public class DeckController : BaseController
     public async Task<ApiResponse<DetailDeckDto>> CreateDeck(CreateDeckDto createDeckDto)
     {
         return await _deckService.CreateDeck(createDeckDto);
+    }
+    
+    [SwaggerOperation("Update deck")]
+    [HttpPut("{id:guid}")]
+    public async Task<ApiResponse<DetailDeckDto>> UpdateDeck(Guid id,UpdateDeckDto updateDeckDto)
+    {
+        return await _deckService.UpdateDeck(id, updateDeckDto);
     }
 }

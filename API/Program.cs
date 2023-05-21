@@ -6,15 +6,12 @@ using MainData.Middlewares;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.EntityFrameworkCore;
 
-var builder = WebApplication.CreateBuilder(new WebApplicationOptions()
-{
-    //Setting the status of deployment
-});
+var builder = WebApplication.CreateBuilder(args);
 //
 builder.Services.AddDbContext<DatabaseContext>(options =>
 {
-    var connectString = builder.Configuration.GetConnectionString("DefaultConnection");
-
+    
+    var connectString = EnvironmentExtension.GetAppConnectionString();
     options.UseMySql(connectString, ServerVersion.AutoDetect(connectString), b =>
     {
     });

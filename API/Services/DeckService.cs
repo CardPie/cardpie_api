@@ -13,15 +13,16 @@ public interface IDeckService : IBaseService
     public Task<ApiResponses<DeckDto>> GetDecks(DeckQueryDto deckQueryDto);
     public Task<ApiResponse<DetailDeckDto>> GetDetailDeck(Guid deckId);
     public Task<ApiResponse<DetailDeckDto>> CreateDeck(CreateDeckDto createDeckDto);
-    
+    public Task<ApiResponse<DetailDeckDto>> UpdateDeck(Guid id, UpdateDeckDto updateDeckDto);
+    public Task<ApiResponses<DeckDto>> GetOwnDeck(DeckQueryDto deckQueryDto);
 }
 
 public class DeckService : BaseService, IDeckService
 {
-
     public DeckService(MainUnitOfWork mainUnitOfWork, IHttpContextAccessor httpContextAccessor, IMapperRepository mapperRepository) : base(mainUnitOfWork, httpContextAccessor, mapperRepository)
     {
     }
+    
     public async Task<ApiResponses<DeckDto>> GetDecks(DeckQueryDto deckQueryDto)
     {
         var decks = await MainUnitOfWork.DeckRepository.FindResultAsync<DeckDto>(new Expression<Func<Deck, bool>>[]
@@ -30,6 +31,8 @@ public class DeckService : BaseService, IDeckService
             x => x.IsPublic
         }, deckQueryDto.OrderBy, deckQueryDto.Skip(), deckQueryDto.PageSize);
 
+        decks.Items = await _mapperRepository.MapCreator(decks.Items.ToList());
+        
         return ApiResponses<DeckDto>.Success(
             decks.Items,
             decks.TotalCount,
@@ -92,5 +95,57 @@ public class DeckService : BaseService, IDeckService
 
         return await GetDetailDeck(deck.Id);
     }
-    
+
+    public async Task<ApiResponse<DetailDeckDto>> UpdateDeck(Guid id, UpdateDeckDto updateDeckDto)
+    {
+        var deckDto = await MainUnitOfWork.DeckRepository.FindOneAsync(new Expression<Func<Deck, bool>>[]
+        {
+            x => !x.DeletedAt.HasValue,
+            x => x.Id == id,
+            x => x.IsPublic || x.CreatorId == AccountId
+        });
+
+        if (deckDto == null)
+            throw new ApiException("Not found", StatusCode.NOT_FOUND);
+
+        if (deckDto.CreatorId != AccountId)
+            throw new ApiException("Can't update other's deck", StatusCode.BAD_REQUEST);
+
+        deckDto.IsPublic = updateDeckDto.IsPublic ?? deckDto.IsPublic;
+        deckDto.Color = updateDeckDto.Color ?? deckDto.Color;
+        deckDto.Order = updateDeckDto.Order ?? deckDto.Order;
+        deckDto.FolderId = updateDeckDto.FolderId ?? deckDto.FolderId;
+        deckDto.Description = updateDeckDto.Description ?? deckDto.Description;
+        deckDto.Name = updateDeckDto.Name ?? deckDto.Name;
+        deckDto.LearningLength = updateDeckDto.LearningLength ?? deckDto.LearningLength;
+        deckDto.RecallStrength = updateDeckDto.RecallStrength ?? deckDto.RecallStrength;
+        deckDto.IsDailyRemind = updateDeckDto.IsDailyRemind ?? deckDto.IsDailyRemind;
+        deckDto.ReminderTime = updateDeckDto.ReminderTime ?? deckDto.ReminderTime;
+        deckDto.WeeklyReminderDays = updateDeckDto.WeeklyReminderDays ?? deckDto.WeeklyReminderDays;
+        deckDto.SpacedRepetitionStrategyLevel = updateDeckDto.SpacedRepetitionStrategyLevel ?? deckDto.SpacedRepetitionStrategyLevel;
+
+        if (!await MainUnitOfWork.DeckRepository.UpdateAsync(deckDto, AccountId, CurrentDate))
+            throw new ApiException("Update fail", StatusCode.SERVER_ERROR);
+
+        return await GetDetailDeck(id);
+    }
+
+    public async Task<ApiResponses<DeckDto>> GetOwnDeck(DeckQueryDto deckQueryDto)
+    {
+        var decks = await MainUnitOfWork.DeckRepository.FindResultAsync<DeckDto>(new Expression<Func<Deck, bool>>[]
+        {
+            x => !x.DeletedAt.HasValue,
+            x => x.CreatorId == AccountId
+        }, deckQueryDto.OrderBy, deckQueryDto.Skip(), deckQueryDto.PageSize);
+
+        decks.Items = await _mapperRepository.MapCreator(decks.Items.ToList());
+        
+        return ApiResponses<DeckDto>.Success(
+            decks.Items,
+            decks.TotalCount,
+            deckQueryDto.PageSize,
+            deckQueryDto.Skip(),
+            (int)Math.Ceiling(decks.TotalCount/ (double)deckQueryDto.PageSize)
+        );
+    }
 }

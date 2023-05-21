@@ -13,6 +13,7 @@ public interface IFlashCardService : IBaseService
     Task<ApiResponses<FlashCardDto>> GetAllFlashCard(FlashCardQueryDto queryDto);
     Task<ApiResponse<DetailFlashCardDto>> CreateCard(CreateFlashCardDto createFlashCardDto);
     Task<ApiResponse<DetailFlashCardDto>> DetailFlashCard(Guid id);
+    Task<ApiResponse<DetailFlashCardDto>> UpdateFlashCard(Guid id, UpdateFlashCardDto updateFlashCardDto);
 }
 
 public class FlashCardService : BaseService, IFlashCardService
@@ -63,5 +64,36 @@ public class FlashCardService : BaseService, IFlashCardService
         flashcardDto = await _mapperRepository.MapCreator(flashcardDto);
 
         return ApiResponse<DetailFlashCardDto>.Success(flashcardDto);
+    }
+
+    public async Task<ApiResponse<DetailFlashCardDto>> UpdateFlashCard(Guid id, UpdateFlashCardDto updateFlashCardDto)
+    {
+        var flashcardDto = await MainUnitOfWork.FlashCardRepository.FindOneAsync(new Expression<Func<FlashCard, bool>>[]
+        {
+            x  => !x.DeletedAt.HasValue,
+            x => x.Id == id
+        });
+
+        if (flashcardDto == null)
+            throw new ApiException("Not found", StatusCode.NOT_FOUND);
+        
+        if (flashcardDto.CreatorId != AccountId)
+            throw new ApiException("Can't update other's card", StatusCode.BAD_REQUEST);
+        
+        flashcardDto.Title = updateFlashCardDto.Title ?? flashcardDto.Title;
+        flashcardDto.Content = updateFlashCardDto.Content ?? flashcardDto.Content;
+        flashcardDto.ContentBackOne = updateFlashCardDto.ContentBackOne ?? flashcardDto.ContentBackOne;
+        flashcardDto.TitleBackOne = updateFlashCardDto.TitleBackOne ?? flashcardDto.TitleBackOne;
+        flashcardDto.TitleBackTwo = updateFlashCardDto.TitleBackTwo ?? flashcardDto.TitleBackTwo;
+        flashcardDto.ContentBackTwo = updateFlashCardDto.ContentBackTwo ?? flashcardDto.ContentBackTwo;
+        flashcardDto.ImageUrl = updateFlashCardDto.ImageUrl ?? flashcardDto.ImageUrl;
+        flashcardDto.ImageUrlBack = updateFlashCardDto.ImageUrlBack ?? flashcardDto.ImageUrlBack;
+        flashcardDto.SoundUrl = updateFlashCardDto.SoundUrl ?? flashcardDto.SoundUrl;
+        flashcardDto.SoundUrlBack = updateFlashCardDto.SoundUrlBack ?? flashcardDto.SoundUrlBack;
+
+        if (!await MainUnitOfWork.FlashCardRepository.UpdateAsync(flashcardDto, AccountId, CurrentDate))
+            throw new ApiException("Update fail", StatusCode.SERVER_ERROR);
+
+        return await DetailFlashCard(id);
     }
 }
