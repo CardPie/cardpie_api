@@ -12,7 +12,7 @@ public class Notification : BaseEntity
     public NotificationType Type { get; set; }
     
     //Relationship
-    public virtual User User { get; set; } = new User();
+    //public virtual User User { get; set; } = new User();
 }
 
 public enum NotificationType

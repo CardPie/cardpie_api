@@ -21,10 +21,6 @@ public class Deck : BaseEntity
     public SpacedRepetitionStrategy SpacedRepetitionStrategyLevel { get; set; }
     public Guid FolderId { get; set; }
     
-    //RelationShip
-    public virtual IEnumerable<FlashCard> FlashCards { get; set; } = new List<FlashCard>();
-    public virtual IEnumerable<StudySession> StudySessions { get; set; } = new List<StudySession>();
-    public virtual Folder Folder { get; set; } = new Folder();
 }
 
 public enum SpacedRepetitionStrategy
@@ -60,13 +56,10 @@ public class DeckConfig : IEntityTypeConfiguration<Deck>
         builder.Property(a => a.RecallStrength).IsRequired(false);
         builder.Property(a => a.ReminderTime).IsRequired(false);
         builder.Property(a => a.LearningLength).IsRequired(false);
-        builder.Property(x => x.FolderId).IsRequired();
+        builder.Property(x => x.FolderId).IsRequired().HasDefaultValue(Guid.Empty);
         builder.Property(x => x.WeeklyReminderDays).IsRequired();
         builder.Property(x => x.IsDailyRemind).IsRequired().HasDefaultValue(false);
         builder.Property(a => a.SpacedRepetitionStrategyLevel).IsRequired()
             .HasDefaultValue(SpacedRepetitionStrategy.Normal);
-        /*builder.HasMany(a => a.FlashCards);
-        builder.HasMany(a => a.StudySessions);
-        builder.HasOne(a => a.Folder);*/
     }
 }

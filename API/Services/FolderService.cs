@@ -24,12 +24,9 @@ public interface IFolderService : IBaseService
 
 public class FolderService : BaseService, IFolderService
 {
-    private readonly IMapperRepository _mapperRepository;
-    public FolderService(MainUnitOfWork mainUnitOfWork, IHttpContextAccessor httpContextAccessor, IMapperRepository mapperRepository) : base(mainUnitOfWork, httpContextAccessor)
+    public FolderService(MainUnitOfWork mainUnitOfWork, IHttpContextAccessor httpContextAccessor, IMapperRepository mapperRepository) : base(mainUnitOfWork, httpContextAccessor, mapperRepository)
     {
-        _mapperRepository = mapperRepository;
     }
-
     public async Task<ApiResponses<FolderDto>> GetFolders(FolderQuery folderQuery)
     {
         var folderDtos = await MainUnitOfWork.FolderRepository.FindResultAsync<FolderDto>(new Expression<Func<Folder, bool>>[]
@@ -84,7 +81,7 @@ public class FolderService : BaseService, IFolderService
         var deckDtos = await MainUnitOfWork.DeckRepository.FindAsync<DeckDto>(new Expression<Func<Deck, bool>>[]
         {
             x => !x.DeletedAt.HasValue,
-            x => x.FolderId == id
+            x => x.FolderId == folderDto.Id
         }, null);
 
         folderDto.ListDeck = deckDtos;
@@ -125,4 +122,5 @@ public class FolderService : BaseService, IFolderService
 
         return await GetDetail(folderDto.Id);
     }
+    
 }

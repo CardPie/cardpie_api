@@ -44,7 +44,9 @@ namespace MainData.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<Guid>("FolderId")
-                        .HasColumnType("char(36)");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasDefaultValue(new Guid("00000000-0000-0000-0000-000000000000"));
 
                     b.Property<bool>("IsDailyRemind")
                         .ValueGeneratedOnAdd()
@@ -94,10 +96,6 @@ namespace MainData.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FolderId");
-
-                    b.HasIndex("UserId");
-
                     b.ToTable("Decks");
                 });
 
@@ -116,7 +114,6 @@ namespace MainData.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("ContentBackTwo")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<DateTime>("CreatedAt")
@@ -134,11 +131,9 @@ namespace MainData.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("ImageUrl")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("ImageUrlBack")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("SoundUrl")
@@ -146,9 +141,6 @@ namespace MainData.Migrations
 
                     b.Property<string>("SoundUrlBack")
                         .HasColumnType("longtext");
-
-                    b.Property<Guid?>("StudySessionId")
-                        .HasColumnType("char(36)");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -166,10 +158,6 @@ namespace MainData.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("DeckId");
-
-                    b.HasIndex("StudySessionId");
 
                     b.ToTable("FlashCards");
                 });
@@ -236,46 +224,7 @@ namespace MainData.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PostId");
-
-                    b.HasIndex("UserId");
-
                     b.ToTable("Interactions");
-                });
-
-            modelBuilder.Entity("MainData.Entities.Notification", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<Guid?>("CreatorId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("char(36)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Notification");
                 });
 
             modelBuilder.Entity("MainData.Entities.Post", b =>
@@ -319,10 +268,6 @@ namespace MainData.Migrations
                         .HasColumnType("char(36)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("DeckId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Posts");
                 });
@@ -373,10 +318,6 @@ namespace MainData.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DeckId");
-
-                    b.HasIndex("UserId");
-
                     b.ToTable("StudySessions");
                 });
 
@@ -422,8 +363,6 @@ namespace MainData.Migrations
                         .HasColumnType("char(36)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Tokens");
                 });
@@ -487,146 +426,6 @@ namespace MainData.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("MainData.Entities.Deck", b =>
-                {
-                    b.HasOne("MainData.Entities.Folder", "Folder")
-                        .WithMany("Decks")
-                        .HasForeignKey("FolderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MainData.Entities.User", null)
-                        .WithMany("Decks")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Folder");
-                });
-
-            modelBuilder.Entity("MainData.Entities.FlashCard", b =>
-                {
-                    b.HasOne("MainData.Entities.Deck", "Deck")
-                        .WithMany("FlashCards")
-                        .HasForeignKey("DeckId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MainData.Entities.StudySession", null)
-                        .WithMany("FlashCards")
-                        .HasForeignKey("StudySessionId");
-
-                    b.Navigation("Deck");
-                });
-
-            modelBuilder.Entity("MainData.Entities.Interaction", b =>
-                {
-                    b.HasOne("MainData.Entities.Post", "Post")
-                        .WithMany("Interactions")
-                        .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MainData.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Post");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("MainData.Entities.Notification", b =>
-                {
-                    b.HasOne("MainData.Entities.User", "User")
-                        .WithMany("Notifications")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("MainData.Entities.Post", b =>
-                {
-                    b.HasOne("MainData.Entities.Deck", "Deck")
-                        .WithMany()
-                        .HasForeignKey("DeckId");
-
-                    b.HasOne("MainData.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Deck");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("MainData.Entities.StudySession", b =>
-                {
-                    b.HasOne("MainData.Entities.Deck", "Deck")
-                        .WithMany("StudySessions")
-                        .HasForeignKey("DeckId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MainData.Entities.User", "User")
-                        .WithMany("StudySessions")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Deck");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("MainData.Entities.Token", b =>
-                {
-                    b.HasOne("MainData.Entities.User", null)
-                        .WithMany("Tokens")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("MainData.Entities.Deck", b =>
-                {
-                    b.Navigation("FlashCards");
-
-                    b.Navigation("StudySessions");
-                });
-
-            modelBuilder.Entity("MainData.Entities.Folder", b =>
-                {
-                    b.Navigation("Decks");
-                });
-
-            modelBuilder.Entity("MainData.Entities.Post", b =>
-                {
-                    b.Navigation("Interactions");
-                });
-
-            modelBuilder.Entity("MainData.Entities.StudySession", b =>
-                {
-                    b.Navigation("FlashCards");
-                });
-
-            modelBuilder.Entity("MainData.Entities.User", b =>
-                {
-                    b.Navigation("Decks");
-
-                    b.Navigation("Notifications");
-
-                    b.Navigation("StudySessions");
-
-                    b.Navigation("Tokens");
                 });
 #pragma warning restore 612, 618
         }

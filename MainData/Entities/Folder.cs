@@ -10,7 +10,7 @@ public class Folder : BaseEntity
     public bool? IsPublic { get; set; }
     
     //Relationship
-    public IEnumerable<Deck> Decks { get; set; } = new List<Deck>();
+    //public IEnumerable<Deck> Decks { get; set; } = new List<Deck>();
 }
 
 public class FolderConfig : IEntityTypeConfiguration<Folder>
@@ -19,7 +19,5 @@ public class FolderConfig : IEntityTypeConfiguration<Folder>
     {
         builder.Property(a => a.FolderName).IsRequired();
         builder.Property(a => a.IsPublic).IsRequired(false);
-        /*builder.HasMany(a => a.Decks).WithOne(a => a.Folder)
-            .HasForeignKey(x => x.FolderId).OnDelete(DeleteBehavior.Cascade);*/
     }
 }
