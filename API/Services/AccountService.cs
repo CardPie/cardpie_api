@@ -4,6 +4,7 @@ using AppCore.Extensions;
 using AppCore.Models;
 using MainData;
 using MainData.Entities;
+using MainData.Repositories;
 
 namespace API.Services;
 
@@ -15,10 +16,9 @@ public interface IAccountService : IBaseService
 
 public class AccountService : BaseService, IAccountService
 {
-    public AccountService(MainUnitOfWork mainUnitOfWork, IHttpContextAccessor httpContextAccessor) : base(mainUnitOfWork, httpContextAccessor)
+    public AccountService(MainUnitOfWork mainUnitOfWork, IHttpContextAccessor httpContextAccessor, IMapperRepository mapperRepository) : base(mainUnitOfWork, httpContextAccessor, mapperRepository)
     {
     }
-
     public async Task<ApiResponse<UserDto>> GetAccountInformation()
     {
         var account = await MainUnitOfWork.UserRepository.FindOneAsync<UserDto>(new Expression<Func<User, bool>>[]

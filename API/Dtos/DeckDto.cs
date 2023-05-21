@@ -1,4 +1,5 @@
-﻿using AppCore.Models;
+﻿using AppCore.Attributes;
+using AppCore.Models;
 using MainData.Entities;
 
 namespace API.Dtos;
@@ -15,6 +16,7 @@ public class DeckDto : BaseDto
 
 public class DetailDeckDto : BaseDto
 {
+    public Guid FolderId { get; set; }
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public bool IsPublic { get; set; }
@@ -34,6 +36,7 @@ public class DetailDeckDto : BaseDto
 
 public class CreateDeckDto
 {
+    public Guid FolderId { get; set; }
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public bool IsPublic { get; set; }
@@ -43,7 +46,21 @@ public class CreateDeckDto
     public DateTime? ReminderTime { get; set; }
     public int? LearningLength { get; set; }
     public SpacedRepetitionStrategy SpacedRepetitionStrategyLevel { get; set; }
-    public List<CreateFlashCardDto> ListFlashCards { get; set; } = new List<CreateFlashCardDto>();
+    public List<CreateFlashCardWithDeckDto> ListFlashCards { get; set; } = new List<CreateFlashCardWithDeckDto>();
+}
+
+public class CreateFlashCardWithDeckDto
+{
+    [Required] public string Title { get; set; } 
+    [Required] public string Content { get; set; } 
+    public string? SoundUrl { get; set; }
+    public string? ImageUrl { get; set; } 
+    [Required] public string TitleBackOne { get; set; }
+    [Required] public string ContentBackOne { get; set; } 
+    public string TitleBackTwo { get; set; } 
+    public string ContentBackTwo { get; set; } 
+    public string? SoundUrlBack { get; set; } 
+    public string? ImageUrlBack { get; set; }
 }
 
 public class DeckQueryDto : BaseQueryDto

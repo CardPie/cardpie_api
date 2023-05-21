@@ -18,7 +18,7 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "DOMAIN_PATH": "",
-        "CONNECTION_STRING": "Server=database-cardpie.cc6q7zm01oew.ap-southeast-1.rds.amazonaws.com;port=3306;Database=CardPie;User ID=admin;Password=password;",
+        "CONNECTION_STRING": "Server=localhost;port=3306;Database=cardpie;User ID=root;Password=root;",
         "JWT_ISSUER": "CardPie",
         "JWT_AUDIENCE": "CardPie",
         "JWT_ACCESS_TOKEN_SECRET": "SXI3ZOFOKclSrticLeeHq81OBauR3cszI",

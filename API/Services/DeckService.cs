@@ -4,6 +4,7 @@ using AppCore.Extensions;
 using AppCore.Models;
 using MainData;
 using MainData.Entities;
+using MainData.Repositories;
 
 namespace API.Services;
 
@@ -12,14 +13,15 @@ public interface IDeckService : IBaseService
     public Task<ApiResponses<DeckDto>> GetDecks(DeckQueryDto deckQueryDto);
     public Task<ApiResponse<DetailDeckDto>> GetDetailDeck(Guid deckId);
     public Task<ApiResponse<DetailDeckDto>> CreateDeck(CreateDeckDto createDeckDto);
+    
 }
 
 public class DeckService : BaseService, IDeckService
 {
-    public DeckService(MainUnitOfWork mainUnitOfWork, IHttpContextAccessor httpContextAccessor) : base(mainUnitOfWork, httpContextAccessor)
+
+    public DeckService(MainUnitOfWork mainUnitOfWork, IHttpContextAccessor httpContextAccessor, IMapperRepository mapperRepository) : base(mainUnitOfWork, httpContextAccessor, mapperRepository)
     {
     }
-
     public async Task<ApiResponses<DeckDto>> GetDecks(DeckQueryDto deckQueryDto)
     {
         var decks = await MainUnitOfWork.DeckRepository.FindResultAsync<DeckDto>(new Expression<Func<Deck, bool>>[]
@@ -73,12 +75,15 @@ public class DeckService : BaseService, IDeckService
     {
         var deck = createDeckDto.ProjectTo<CreateDeckDto, Deck>();
         deck.Id = Guid.NewGuid();
+        deck.FolderId = createDeckDto.FolderId;
         deck.UserId = AccountId;
 
         if (!(await MainUnitOfWork.DeckRepository.InsertAsync(deck, AccountId, CurrentDate)))
             throw new ApiException("Save fail", StatusCode.SERVER_ERROR);
         
-        var flashCards = createDeckDto.ListFlashCards.ProjectTo<CreateFlashCardDto, FlashCard>();
+        var flashCards = createDeckDto.ListFlashCards.ProjectTo<CreateFlashCardWithDeckDto, FlashCard>();
+        
+        flashCards.ForEach(x => x.DeckId = deck.Id);
         
         flashCards.ForEach(item => item.DeckId = deck.Id);
         
@@ -87,4 +92,5 @@ public class DeckService : BaseService, IDeckService
 
         return await GetDetailDeck(deck.Id);
     }
+    
 }
