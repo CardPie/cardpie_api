@@ -5,6 +5,7 @@ using AppCore.Models;
 using MainData;
 using MainData.Entities;
 using AppCore.Extensions;
+using MainData.Repositories;
 
 namespace API.Services;
 
@@ -18,10 +19,9 @@ public interface IAuthService : IBaseService
 
 public class AuthService : BaseService, IAuthService
 {
-    public AuthService(MainUnitOfWork mainUnitOfWork, IHttpContextAccessor httpContextAccessor) : base(mainUnitOfWork, httpContextAccessor)
+    public AuthService(MainUnitOfWork mainUnitOfWork, IHttpContextAccessor httpContextAccessor, IMapperRepository mapperRepository) : base(mainUnitOfWork, httpContextAccessor, mapperRepository)
     {
     }
-
     public async Task<ApiResponse<AuthDto>> SignIn(AccountCredentialLoginDto accountCredentialLoginDto)
     {
         var user = await MainUnitOfWork.UserRepository.FindOneAsync(new Expression<Func<User, bool>>[]
@@ -71,7 +71,7 @@ public class AuthService : BaseService, IAuthService
             RefreshExpiredAt = refreshExpiredAt,
             AccessToken = accessToken,
             RefreshToken = refreshToken,
-            Email = user .Username,
+            Email = user.Email,
             Fullname = user.Fullname,
             Role = user.Role,
             UserId = user.Id,
@@ -121,7 +121,7 @@ public class AuthService : BaseService, IAuthService
             RefreshExpiredAt = refreshExpiredAt,
             AccessToken = accessToken,
             RefreshToken = refreshToken,
-            Email = account.Username,
+            Email = account.Email,
             Fullname = account.Fullname,
             Role = account.Role,
             UserId = account.Id

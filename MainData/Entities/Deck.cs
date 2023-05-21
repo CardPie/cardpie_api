@@ -16,11 +16,11 @@ public class Deck : BaseEntity
     public int? RecallStrength { get; set; }
     public DateTime? ReminderTime { get; set; }
     public int? LearningLength { get; set; }
+    public bool IsDailyRemind { get; set; }
+    public string WeeklyReminderDays { get; set; } = string.Empty;
     public SpacedRepetitionStrategy SpacedRepetitionStrategyLevel { get; set; }
+    public Guid FolderId { get; set; }
     
-    //RelationShip
-    public virtual IEnumerable<FlashCard> FlashCards { get; set; } = new List<FlashCard>();
-    public virtual IEnumerable<StudySession> StudySessions { get; set; } = new List<StudySession>();
 }
 
 public enum SpacedRepetitionStrategy
@@ -38,6 +38,11 @@ public enum DeckOrder
     Front = 1, Back =2 , Random = 3
 }
 
+public enum DayInWeek
+{
+    Monday = 2, Tuesday = 3, Wednesday = 4, Thursday = 5, Friday = 6, Saturday = 7, Sunday = 8
+}
+
 public class DeckConfig : IEntityTypeConfiguration<Deck>
 {
     public void Configure(EntityTypeBuilder<Deck> builder)
@@ -51,9 +56,10 @@ public class DeckConfig : IEntityTypeConfiguration<Deck>
         builder.Property(a => a.RecallStrength).IsRequired(false);
         builder.Property(a => a.ReminderTime).IsRequired(false);
         builder.Property(a => a.LearningLength).IsRequired(false);
+        builder.Property(x => x.FolderId).IsRequired().HasDefaultValue(Guid.Empty);
+        builder.Property(x => x.WeeklyReminderDays).IsRequired();
+        builder.Property(x => x.IsDailyRemind).IsRequired().HasDefaultValue(false);
         builder.Property(a => a.SpacedRepetitionStrategyLevel).IsRequired()
             .HasDefaultValue(SpacedRepetitionStrategy.Normal);
-        builder.HasMany(a => a.FlashCards);
-        builder.HasMany(a => a.StudySessions);
     }
 }

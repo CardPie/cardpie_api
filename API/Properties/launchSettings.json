@@ -8,23 +8,13 @@
       "sslPort": 44331
     }
   },
-  "profiles": { 
+  "profiles": {
     "http": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
       "launchUrl": "swagger",
-      "applicationUrl": "http://localhost:5286",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "DOMAIN_PATH": "",
-        "CONNECTION_STRING": "Server=database-cardpie.cc6q7zm01oew.ap-southeast-1.rds.amazonaws.com;port=3306;Database=CardPie;User ID=admin;Password=password;",
-        "JWT_ISSUER": "CardPie",
-        "JWT_AUDIENCE": "CardPie",
-        "JWT_ACCESS_TOKEN_SECRET": "SXI3ZOFOKclSrticLeeHq81OBauR3cszI",
-        "JWT_ACCESS_TOKEN_EXPIRES": "525960",
-        "JWT_RESET_TOKEN_EXPIRES": "525960"
-      }
+      "applicationUrl": "http://localhost:5000"
     }
   }
 }

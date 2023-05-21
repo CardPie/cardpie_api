@@ -14,6 +14,9 @@ public class DatabaseContext : DbContext
     public DbSet<Deck> Decks { get; set; }
     public DbSet<FlashCard> FlashCards { get; set; }
     public DbSet<StudySession> StudySessions { get; set; }
+    public DbSet<Folder> Folders { get; set; }
+    public DbSet<Post> Posts { get; set; }
+    public DbSet<Interaction> Interactions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -22,5 +25,8 @@ public class DatabaseContext : DbContext
         modelBuilder.ApplyConfiguration(new DeckConfig());
         modelBuilder.ApplyConfiguration(new FlashCardConfig());
         modelBuilder.ApplyConfiguration(new StudySessionConfig());
+        modelBuilder.ApplyConfiguration(new FolderConfig());
+        modelBuilder.ApplyConfiguration(new PostConfig());
+        modelBuilder.ApplyConfiguration(new InteractionConfig());
     }
 }

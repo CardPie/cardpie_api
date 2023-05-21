@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MainData.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20230517062532_u2")]
-    partial class u2
+    [Migration("20230521202214_u1")]
+    partial class u1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -46,13 +46,23 @@ namespace MainData.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<Guid>("FolderId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasDefaultValue(new Guid("00000000-0000-0000-0000-000000000000"));
+
+                    b.Property<bool>("IsDailyRemind")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("tinyint(1)")
+                        .HasDefaultValue(false);
+
                     b.Property<bool>("IsPublic")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("tinyint(1)")
                         .HasDefaultValue(false);
 
-                    b.Property<TimeSpan?>("LearningLength")
-                        .HasColumnType("time(6)");
+                    b.Property<int?>("LearningLength")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -66,8 +76,8 @@ namespace MainData.Migrations
                     b.Property<int?>("RecallStrength")
                         .HasColumnType("int");
 
-                    b.Property<TimeSpan?>("ReminderTime")
-                        .HasColumnType("time(6)");
+                    b.Property<DateTime?>("ReminderTime")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("SpacedRepetitionStrategyLevel")
                         .ValueGeneratedOnAdd()
@@ -77,14 +87,17 @@ namespace MainData.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid?>("UserId")
+                        .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)")
                         .HasDefaultValue(new Guid("00000000-0000-0000-0000-000000000000"));
 
-                    b.HasKey("Id");
+                    b.Property<string>("WeeklyReminderDays")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
-                    b.HasIndex("UserId");
+                    b.HasKey("Id");
 
                     b.ToTable("Decks");
                 });
@@ -95,12 +108,15 @@ namespace MainData.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<string>("Back")
+                    b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("BackImage")
+                    b.Property<string>("ContentBackOne")
                         .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("ContentBackTwo")
                         .HasColumnType("longtext");
 
                     b.Property<DateTime>("CreatedAt")
@@ -117,11 +133,27 @@ namespace MainData.Migrations
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<string>("Front")
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("ImageUrlBack")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("SoundUrl")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("SoundUrlBack")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("FrontImage")
+                    b.Property<string>("TitleBackOne")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("TitleBackTwo")
                         .IsRequired()
                         .HasColumnType("longtext");
 
@@ -130,9 +162,117 @@ namespace MainData.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DeckId");
-
                     b.ToTable("FlashCards");
+                });
+
+            modelBuilder.Entity("MainData.Entities.Folder", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<Guid?>("CreatorId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("FolderName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<bool?>("IsPublic")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Folders");
+                });
+
+            modelBuilder.Entity("MainData.Entities.Interaction", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("Content")
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<Guid?>("CreatorId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("char(36)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Interactions");
+                });
+
+            modelBuilder.Entity("MainData.Entities.Post", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<Guid?>("CreatorId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid?>("DeckId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("Like")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Report")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("char(36)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Posts");
                 });
 
             modelBuilder.Entity("MainData.Entities.StudySession", b =>
@@ -181,10 +321,6 @@ namespace MainData.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DeckId");
-
-                    b.HasIndex("UserId");
-
                     b.ToTable("StudySessions");
                 });
 
@@ -231,8 +367,6 @@ namespace MainData.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
-
                     b.ToTable("Tokens");
                 });
 
@@ -243,6 +377,9 @@ namespace MainData.Migrations
                         .HasColumnType("char(36)");
 
                     b.Property<string>("Address")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Avatar")
                         .HasColumnType("longtext");
 
                     b.Property<DateTime>("CreatedAt")
@@ -292,68 +429,6 @@ namespace MainData.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("MainData.Entities.Deck", b =>
-                {
-                    b.HasOne("MainData.Entities.User", null)
-                        .WithMany("Decks")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("MainData.Entities.FlashCard", b =>
-                {
-                    b.HasOne("MainData.Entities.Deck", null)
-                        .WithMany("FlashCards")
-                        .HasForeignKey("DeckId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("MainData.Entities.StudySession", b =>
-                {
-                    b.HasOne("MainData.Entities.Deck", "Deck")
-                        .WithMany("StudySessions")
-                        .HasForeignKey("DeckId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("MainData.Entities.User", "User")
-                        .WithMany("StudySessions")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Deck");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("MainData.Entities.Token", b =>
-                {
-                    b.HasOne("MainData.Entities.User", null)
-                        .WithMany("Tokens")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("MainData.Entities.Deck", b =>
-                {
-                    b.Navigation("FlashCards");
-
-                    b.Navigation("StudySessions");
-                });
-
-            modelBuilder.Entity("MainData.Entities.User", b =>
-                {
-                    b.Navigation("Decks");
-
-                    b.Navigation("StudySessions");
-
-                    b.Navigation("Tokens");
                 });
 #pragma warning restore 612, 618
         }

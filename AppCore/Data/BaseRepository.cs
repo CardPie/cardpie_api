@@ -29,7 +29,7 @@ public interface IBaseRepository<TEntity> where TEntity : BaseEntity
         int skip,
         int limit);
 
-    public Task<TDto> FindOneAsync<TDto>(Expression<Func<TEntity, bool>>[]? filters,
+    public Task<TDto?> FindOneAsync<TDto>(Expression<Func<TEntity, bool>>[]? filters,
         string? orderBy = null);
 
     public Task<int> CountAsync(
@@ -331,7 +331,7 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
         return FindResult<TDto>.Success(result.ProjectTo<TEntity, TDto>(), totalCount);
     }
     
-    public async Task<TDto> FindOneAsync<TDto>(Expression<Func<TEntity, bool>>[]? filters, string? orderBy = null)
+    public async Task<TDto?> FindOneAsync<TDto>(Expression<Func<TEntity, bool>>[]? filters, string? orderBy = null)
     {
         IQueryable<TEntity> query = _dbSet;
         query = query.Where(x => !x.DeletedAt.HasValue);
