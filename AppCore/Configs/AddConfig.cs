@@ -79,7 +79,8 @@ public static class AddConfigServiceCollectionExtensions
             option.JsonSerializerOptions.PropertyNamingPolicy = new SnakeCaseNamingPolicy();
             option.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
             option.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-            option.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+            option.JsonSerializerOptions.DefaultIgnoreCondition =
+                JsonIgnoreCondition.Never; //JsonIgnoreCondition.WhenWritingNull;
         });
 
         services.AddLogging(EnvironmentExtension.GetAppLogFolder());
