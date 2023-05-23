@@ -3,6 +3,7 @@ using API.Services;
 using AppCore.Models;
 using MainData.Entities;
 using MainData.Middlewares;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -38,5 +39,28 @@ public class AuthController : BaseController
     public async Task<ApiResponse<AuthDto>> SignIn(AuthRefreshDto authRefreshDto)
     {
         return await _authenticationService.RefreshToken(authRefreshDto);
+    }
+    
+    [HttpGet("sign-in-google")]
+    [AllowAnonymous]
+    public IActionResult GoogleLogin()
+    {
+        var properties = new AuthenticationProperties
+        {
+            RedirectUri = Url.Action(nameof(GoogleLoginCallback)),
+            Items =
+            {
+                { "LoginProvider", "Google" }
+            }
+        };
+
+        return Challenge(properties, "Google");
+    }
+
+    [HttpGet("google/callback")]
+    [AllowAnonymous]
+    public IActionResult GoogleLoginCallback()
+    {
+        return Ok("Google login successful!");
     }
 }   

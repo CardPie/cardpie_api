@@ -17,7 +17,7 @@ public interface IBaseRepository<TEntity> where TEntity : BaseEntity
 
     public Task<List<TEntity?>> FindAsync(
         Expression<Func<TEntity, bool>>[]? filters,
-        string orderBy);
+        string? orderBy);
     
     public Task<List<TDto>> FindAsync<TDto>(
         Expression<Func<TEntity, bool>>[]? filters,
@@ -99,7 +99,7 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
         return await query.ToListAsync();
     }
 
-    public async Task<List<TEntity?>> FindAsync(Expression<Func<TEntity, bool>>[]? filters, string orderBy)
+    public async Task<List<TEntity?>> FindAsync(Expression<Func<TEntity, bool>>[]? filters, string? orderBy)
     {
         IQueryable<TEntity?> query = _dbSet;
         query = query.Where(x => x != null && !x.DeletedAt.HasValue);

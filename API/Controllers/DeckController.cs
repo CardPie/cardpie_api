@@ -49,4 +49,11 @@ public class DeckController : BaseController
     {
         return await _deckService.UpdateDeck(id, updateDeckDto);
     }
+    
+    [SwaggerOperation("Get recommend decks for current logged in account")]
+    [HttpGet("recommend")]
+    public async Task<ApiResponses<DeckDto>> GetRecommendDeck([FromQuery]DeckQueryDto deckQueryDto)
+    {
+        return await _deckService.GetRecommendDecks(deckQueryDto);
+    }
 }

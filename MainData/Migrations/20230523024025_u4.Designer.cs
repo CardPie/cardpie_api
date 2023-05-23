@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MainData.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20230521202214_u1")]
-    partial class u1
+    [Migration("20230523024025_u4")]
+    partial class u4
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -84,6 +84,10 @@ namespace MainData.Migrations
                         .HasColumnType("int")
                         .HasDefaultValue(2);
 
+                    b.Property<string>("Tags")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)");
 
@@ -92,6 +96,9 @@ namespace MainData.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)")
                         .HasDefaultValue(new Guid("00000000-0000-0000-0000-000000000000"));
+
+                    b.Property<int>("View")
+                        .HasColumnType("int");
 
                     b.Property<string>("WeeklyReminderDays")
                         .IsRequired()
@@ -280,6 +287,10 @@ namespace MainData.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
+
+                    b.Property<string>("CardsStudied")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<int>("CorrectCount")
                         .HasColumnType("int");

@@ -75,8 +75,15 @@ public class AuthService : BaseService, IAuthService
             Fullname = user.Fullname,
             Role = user.Role,
             UserId = user.Id,
-            //IsFirstLogin = (user.FirstLoginAt == null)
+            IsFirstLogin = (user.FirstLoginAt == null)
         };
+        
+        
+        //Update user
+        user.FirstLoginAt = CurrentDate;
+
+        if (!await MainUnitOfWork.UserRepository.UpdateAsync(user, Guid.Empty, CurrentDate))
+            throw new ApiException("Login fail!", StatusCode.SERVER_ERROR);
         
         return ApiResponse<AuthDto>.Success(verifyResponse);
     }
@@ -124,7 +131,8 @@ public class AuthService : BaseService, IAuthService
             Email = account.Email,
             Fullname = account.Fullname,
             Role = account.Role,
-            UserId = account.Id
+            UserId = account.Id,
+            IsFirstLogin = (account.FirstLoginAt == null)
         });
     }
 
