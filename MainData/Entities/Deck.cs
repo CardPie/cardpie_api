@@ -12,7 +12,8 @@ public class Deck : BaseEntity
     public DeckColor Color { get; set; }
     public DeckOrder Order { get; set; }
     public Guid? UserId { get; set; }
-    
+    public int View { get; set; }
+    public string Tags { get; set; } = string.Empty;
     public int? RecallStrength { get; set; }
     public DateTime? ReminderTime { get; set; }
     public int? LearningLength { get; set; }
@@ -49,6 +50,8 @@ public class DeckConfig : IEntityTypeConfiguration<Deck>
     {
         builder.Property(a => a.UserId).IsRequired().HasDefaultValue(Guid.Empty);
         builder.Property(a => a.Name).IsRequired();
+        builder.Property(a => a.View).IsRequired();
+        builder.Property(a => a.Tags).IsRequired();
         builder.Property(a => a.Description).IsRequired();
         builder.Property(a => a.Color).IsRequired().HasDefaultValue(DeckColor.Purple);
         builder.Property(a => a.Order).IsRequired().HasDefaultValue(DeckOrder.Front);

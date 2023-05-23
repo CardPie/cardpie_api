@@ -10,15 +10,12 @@ public class StudySession : BaseEntity
     public Guid UserId { get; set; }
     public DateTime StartTime { get; set; }
     public DateTime? EndTime { get; set; }
+    public string? CardsStudied { get; set; }
     public int CurrentCardIndex { get; set; }
     public int CorrectCount { get; set; }
     public int IncorrectCount { get; set; }
     public bool IsCompleted { get; set; }
     
-    //Relationship
-    /*public virtual List<FlashCard> FlashCards { get; set; } = new List<FlashCard>();
-    public virtual Deck Deck { get; set; } = new Deck();
-    public virtual User User { get; set; } = new User();*/
 }
 
 public class StudySessionConfig : IEntityTypeConfiguration<StudySession>
@@ -32,6 +29,7 @@ public class StudySessionConfig : IEntityTypeConfiguration<StudySession>
         builder.Property(a => a.CurrentCardIndex).IsRequired();
         builder.Property(a => a.CorrectCount).IsRequired();
         builder.Property(a => a.IncorrectCount).IsRequired();
+        builder.Property(a => a.CardsStudied).IsRequired();
         builder.Property(a => a.IsCompleted).IsRequired().HasDefaultValue(false);
     }
 }

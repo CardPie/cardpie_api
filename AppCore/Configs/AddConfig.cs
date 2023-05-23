@@ -4,7 +4,9 @@ using System.Text.Json.Serialization;
 using AppCore.Extensions;
 using AppCore.Middlewares;
 using AppCore.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -31,12 +33,14 @@ public static class AddConfigServiceCollectionExtensions
         services.AddConfigSwagger();
         services.AddHttpContextAccessor();
 
+        //services.AddIdentity<IdentityUser, IdentityRole>();
+            
         // Service regis service
         services.RegisAllService(projectRegis.ToArray(), ignoreServices.ToArray());
         
         // Add JWT authentication
-        services.AddAuthentication("Bearer")
-            .AddJwtBearer("Bearer", options =>
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
             {
                 // Configure JWT authentication options
                 options.TokenValidationParameters = new TokenValidationParameters

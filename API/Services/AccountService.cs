@@ -30,7 +30,37 @@ public class AccountService : BaseService, IAccountService
         if (account == null)
             throw new ApiException("Not found the information", StatusCode.NOT_FOUND);
 
-        return ApiResponse<UserDto>.Success(account);
+        // Get number of saved deck
+        var saveDecks = await MainUnitOfWork.SavedDeckRepository.FindAsync(new Expression<Func<SavedDeck, bool>>[]
+        {
+            x => !x.DeletedAt.HasValue,
+            x => x.CreatorId == AccountId
+        },null);
+
+        account.SavedDeck = saveDecks.Count();
+        
+        // Get number of created decks
+        var createdDeck = await MainUnitOfWork.DeckRepository.FindAsync(new Expression<Func<Deck, bool>>[]
+        {
+            x => !x.DeletedAt.HasValue,
+            x => x.CreatorId == AccountId
+        }, null);
+
+        account.CreatedDeck = createdDeck.Count();
+        
+        // Get number studied cards
+        var studySessions = await MainUnitOfWork.StudySessionRepository.FindAsync(
+            new Expression<Func<StudySession, bool>>[]
+            {
+                x => !x.DeletedAt.HasValue,
+                x => x.UserId == AccountId
+            }, null);
+
+       account.StudiedCard = studySessions
+            .SelectMany(s => s!.CardsStudied?.Split(',') ?? Array.Empty<string>())
+            .Count();
+
+       return ApiResponse<UserDto>.Success(account);
     }
 
     public async Task<ApiResponse<UserDto>> UpdateInformation(UpdateUserDto updateUserDto)

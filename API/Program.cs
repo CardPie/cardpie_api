@@ -38,5 +38,6 @@ var app = builder.Build();
 app.UseConfig();
 //
 app.MapControllers();
+
 app.UseMiddleware<AuthMiddleware>();
 app.Run();
