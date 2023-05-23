@@ -20,6 +20,7 @@ public class MainUnitOfWork : IDisposable
     public BaseRepository<Folder> FolderRepository => new(_context);
     public BaseRepository<Post> PostRepository => new(_context);
     public BaseRepository<Interaction> InteractionRepository => new(_context);
+    public BaseRepository<SavedDeck> SavedDeckRepository => new(_context);
 
     public void Dispose()
     {

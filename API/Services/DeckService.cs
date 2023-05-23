@@ -5,6 +5,7 @@ using AppCore.Models;
 using MainData;
 using MainData.Entities;
 using MainData.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Services;
 
@@ -15,14 +16,16 @@ public interface IDeckService : IBaseService
     public Task<ApiResponse<DetailDeckDto>> CreateDeck(CreateDeckDto createDeckDto);
     public Task<ApiResponse<DetailDeckDto>> UpdateDeck(Guid id, UpdateDeckDto updateDeckDto);
     public Task<ApiResponses<DeckDto>> GetOwnDeck(DeckQueryDto deckQueryDto);
+    public Task<ApiResponses<DeckDto>> GetRecommendDecks(DeckQueryDto deckQueryDto);
 }
 
 public class DeckService : BaseService, IDeckService
 {
-    public DeckService(MainUnitOfWork mainUnitOfWork, IHttpContextAccessor httpContextAccessor, IMapperRepository mapperRepository) : base(mainUnitOfWork, httpContextAccessor, mapperRepository)
+    public DeckService(MainUnitOfWork mainUnitOfWork, IHttpContextAccessor httpContextAccessor,
+        IMapperRepository mapperRepository) : base(mainUnitOfWork, httpContextAccessor, mapperRepository)
     {
     }
-    
+
     public async Task<ApiResponses<DeckDto>> GetDecks(DeckQueryDto deckQueryDto)
     {
         var decks = await MainUnitOfWork.DeckRepository.FindResultAsync<DeckDto>(new Expression<Func<Deck, bool>>[]
@@ -32,14 +35,14 @@ public class DeckService : BaseService, IDeckService
         }, deckQueryDto.OrderBy, deckQueryDto.Skip(), deckQueryDto.PageSize);
 
         decks.Items = await _mapperRepository.MapCreator(decks.Items.ToList());
-        
+
         return ApiResponses<DeckDto>.Success(
             decks.Items,
             decks.TotalCount,
             deckQueryDto.PageSize,
             deckQueryDto.Skip(),
-            (int)Math.Ceiling(decks.TotalCount/ (double)deckQueryDto.PageSize)
-            );
+            (int)Math.Ceiling(decks.TotalCount / (double)deckQueryDto.PageSize)
+        );
     }
 
     public async Task<ApiResponse<DetailDeckDto>> GetDetailDeck(Guid deckId)
@@ -53,21 +56,23 @@ public class DeckService : BaseService, IDeckService
 
         if (deckDto == null)
             throw new ApiException("Not found", StatusCode.NOT_FOUND);
-        
-        var flashCards = await MainUnitOfWork.FlashCardRepository.FindAsync<FlashCardDto>(new Expression<Func<FlashCard, bool>>[]
-        {
-            x => !x.DeletedAt.HasValue, 
-            x => x.DeckId == deckDto.Id
-        }, null);
+
+        var flashCards = await MainUnitOfWork.FlashCardRepository.FindAsync<FlashCardDto>(
+            new Expression<Func<FlashCard, bool>>[]
+            {
+                x => !x.DeletedAt.HasValue,
+                x => x.DeckId == deckDto.Id
+            }, null);
 
         deckDto.ListFlashCards = flashCards;
-        
-        var studySessions = await MainUnitOfWork.StudySessionRepository.FindAsync<StudySessionDto>(new Expression<Func<StudySession, bool>>[]
-        {
-            x => !x.DeletedAt.HasValue, 
-            x => x.DeckId == deckDto.Id,
-            x => x.UserId == AccountId,
-        }, null);
+
+        var studySessions = await MainUnitOfWork.StudySessionRepository.FindAsync<StudySessionDto>(
+            new Expression<Func<StudySession, bool>>[]
+            {
+                x => !x.DeletedAt.HasValue,
+                x => x.DeckId == deckDto.Id,
+                x => x.UserId == AccountId,
+            }, null);
 
         deckDto.ListStudySessions = studySessions;
 
@@ -83,13 +88,13 @@ public class DeckService : BaseService, IDeckService
 
         if (!(await MainUnitOfWork.DeckRepository.InsertAsync(deck, AccountId, CurrentDate)))
             throw new ApiException("Save fail", StatusCode.SERVER_ERROR);
-        
+
         var flashCards = createDeckDto.ListFlashCards.ProjectTo<CreateFlashCardWithDeckDto, FlashCard>();
-        
+
         flashCards.ForEach(x => x.DeckId = deck.Id);
-        
+
         flashCards.ForEach(item => item.DeckId = deck.Id);
-        
+
         if (!(await MainUnitOfWork.FlashCardRepository.InsertAsync(flashCards, AccountId, CurrentDate)))
             throw new ApiException("Save fail", StatusCode.SERVER_ERROR);
 
@@ -122,7 +127,8 @@ public class DeckService : BaseService, IDeckService
         deckDto.IsDailyRemind = updateDeckDto.IsDailyRemind ?? deckDto.IsDailyRemind;
         deckDto.ReminderTime = updateDeckDto.ReminderTime ?? deckDto.ReminderTime;
         deckDto.WeeklyReminderDays = updateDeckDto.WeeklyReminderDays ?? deckDto.WeeklyReminderDays;
-        deckDto.SpacedRepetitionStrategyLevel = updateDeckDto.SpacedRepetitionStrategyLevel ?? deckDto.SpacedRepetitionStrategyLevel;
+        deckDto.SpacedRepetitionStrategyLevel =
+            updateDeckDto.SpacedRepetitionStrategyLevel ?? deckDto.SpacedRepetitionStrategyLevel;
 
         if (!await MainUnitOfWork.DeckRepository.UpdateAsync(deckDto, AccountId, CurrentDate))
             throw new ApiException("Update fail", StatusCode.SERVER_ERROR);
@@ -139,13 +145,65 @@ public class DeckService : BaseService, IDeckService
         }, deckQueryDto.OrderBy, deckQueryDto.Skip(), deckQueryDto.PageSize);
 
         decks.Items = await _mapperRepository.MapCreator(decks.Items.ToList());
-        
+
         return ApiResponses<DeckDto>.Success(
             decks.Items,
             decks.TotalCount,
             deckQueryDto.PageSize,
             deckQueryDto.Skip(),
-            (int)Math.Ceiling(decks.TotalCount/ (double)deckQueryDto.PageSize)
+            (int)Math.Ceiling(decks.TotalCount / (double)deckQueryDto.PageSize)
         );
     }
+
+    public async Task<ApiResponses<DeckDto>> GetRecommendDecks(DeckQueryDto deckQueryDto)
+    {
+        var studySessions = await MainUnitOfWork.StudySessionRepository.FindAsync(
+            new Expression<Func<StudySession, bool>>[]
+            {
+                x => !x.DeletedAt.HasValue,
+                x => x.UserId == AccountId
+            }, null);
+
+        var deckIds = studySessions.Select(s => s.DeckId).ToList();
+
+        var recommendedDecks = MainUnitOfWork.DeckRepository.GetQuery();
+
+        if (deckIds.Any())
+        {
+            recommendedDecks = recommendedDecks.Where(d => deckIds.Contains(d.Id));
+        }
+
+        var allRecommendedDecks = await recommendedDecks.ToListAsync();
+
+        // Retrieve all the tags associated with the recommended decks
+        var recommendedTags = allRecommendedDecks
+            .SelectMany(d => d.Tags)
+            .Distinct()
+            .ToList();
+
+        // Get the top tags based on the number of occurrences in study sessions
+        var topTags = recommendedTags
+            .GroupBy(t => t)
+            .OrderByDescending(g => g.Count())
+            .Select(g => g.Key)
+            .Take(5) // Change the number as desired
+            .ToList();
+
+        var filteredDecks = allRecommendedDecks
+            .Where(d => d.Tags.Any(t => topTags.Contains(t)))
+            .OrderByDescending(d => d.View)
+            .Take(5)
+            .ToList();
+
+        var deckDtos = filteredDecks.ProjectTo<Deck, DeckDto>();
+
+        return ApiResponses<DeckDto>.Success(
+            deckDtos,
+            filteredDecks.Count,
+            deckQueryDto.PageSize,
+            deckQueryDto.Skip(),
+            (int)Math.Ceiling(filteredDecks.Count / (double)deckQueryDto.PageSize)
+        );
+    }
+    
 }

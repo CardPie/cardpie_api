@@ -31,7 +31,7 @@ public class AuthService : BaseService, IAuthService
 
         if (user == null)
         {
-            throw new ApiException(StatusCode.NOT_FOUND);
+            throw new ApiException("Not existed user",StatusCode.NOT_FOUND);
         }
         
         // Check status
@@ -41,7 +41,7 @@ public class AuthService : BaseService, IAuthService
         // Check password
         if (!accountCredentialLoginDto.Password.VerifyPassword<User>(user.Salt!, user.Password!))
         {
-            throw new ApiException("Invalid username or password", StatusCode.BAD_REQUEST);
+            throw new ApiException("Incorrect password", StatusCode.BAD_REQUEST);
         }
         
         var claims = SetClaims(user);
@@ -75,8 +75,15 @@ public class AuthService : BaseService, IAuthService
             Fullname = user.Fullname,
             Role = user.Role,
             UserId = user.Id,
-            //IsFirstLogin = (user.FirstLoginAt == null)
+            IsFirstLogin = (user.FirstLoginAt == null)
         };
+        
+        
+        //Update user
+        user.FirstLoginAt = CurrentDate;
+
+        if (!await MainUnitOfWork.UserRepository.UpdateAsync(user, Guid.Empty, CurrentDate))
+            throw new ApiException("Login fail!", StatusCode.SERVER_ERROR);
         
         return ApiResponse<AuthDto>.Success(verifyResponse);
     }
@@ -124,7 +131,8 @@ public class AuthService : BaseService, IAuthService
             Email = account.Email,
             Fullname = account.Fullname,
             Role = account.Role,
-            UserId = account.Id
+            UserId = account.Id,
+            IsFirstLogin = (account.FirstLoginAt == null)
         });
     }
 
