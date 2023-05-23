@@ -7,7 +7,7 @@ namespace API.Controllers;
 [ApiController]
 [ApiVersion("1")]
 [Route("api/v{version:apiVersion}/[Controller]")]
-[Authorize(new[] { UserRole.Admin })]
+[Authorize(new[] { UserRole.Admin, UserRole.Member })]
 public class BaseController : ControllerBase
 {
     

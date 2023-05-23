@@ -60,6 +60,8 @@ public class AccountService : BaseService, IAccountService
             .SelectMany(s => s!.CardsStudied?.Split(',') ?? Array.Empty<string>())
             .Count();
 
+       account = await _mapperRepository.MapCreator(account);
+
        return ApiResponse<UserDto>.Success(account);
     }
 

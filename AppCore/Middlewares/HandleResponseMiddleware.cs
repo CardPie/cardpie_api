@@ -125,7 +125,7 @@ public class HandleResponseMiddleware
                 PropertyNamingPolicy = new SnakeCaseNamingPolicy(),
                 PropertyNameCaseInsensitive = true,
                 ReferenceHandler = ReferenceHandler.IgnoreCycles,
-                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+                DefaultIgnoreCondition = JsonIgnoreCondition.Never//JsonIgnoreCondition.WhenWritingNull
             }
         );
 
