@@ -27,6 +27,9 @@ namespace MainData.Migrations
                     Color = table.Column<int>(type: "int", nullable: false, defaultValue: 1),
                     Order = table.Column<int>(type: "int", nullable: false, defaultValue: 1),
                     UserId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValue: new Guid("00000000-0000-0000-0000-000000000000"), collation: "ascii_general_ci"),
+                    View = table.Column<int>(type: "int", nullable: false),
+                    Tags = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     RecallStrength = table.Column<int>(type: "int", nullable: true),
                     ReminderTime = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     LearningLength = table.Column<int>(type: "int", nullable: true),
@@ -156,6 +159,8 @@ namespace MainData.Migrations
                     UserId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     StartTime = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     EndTime = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    CardsStudied = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     CurrentCardIndex = table.Column<int>(type: "int", nullable: false),
                     CorrectCount = table.Column<int>(type: "int", nullable: false),
                     IncorrectCount = table.Column<int>(type: "int", nullable: false),
