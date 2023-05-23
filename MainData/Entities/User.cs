@@ -20,15 +20,7 @@ public class User : BaseEntity
     public DateTime? FirstLoginAt { get; set; }
     
     public DateTime? LastLoginAt { get; set; }
-
-    // RelationShip
-    /*public virtual IEnumerable<Token> Tokens { get; set; } = new List<Token>();
-
-    public virtual IEnumerable<Deck> Decks { get; set; } = new List<Deck>();
     
-    public virtual IEnumerable<StudySession> StudySessions { get; set; } = new List<StudySession>();
-    
-    public virtual IEnumerable<Notification> Notifications { get; set; } = new List<Notification>();*/
 }
 
 public enum UserRole

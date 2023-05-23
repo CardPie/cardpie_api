@@ -24,15 +24,15 @@ public class InitController : BaseController
         var user = new User
         {
             Id = Guid.NewGuid(),
-            Email = "giangntse150747@gmail.com",
-            Address = "Di An, Binh Duong",
-            Fullname = "Nguyen Truong Giang",
-            Username = "Giang",
-            Password = SecurityExtension.HashPassword<User>("Giang123@", salt),
-            Role = UserRole.Admin,
+            Email = "oanhnmh150996@gmail.com",
+            Address = "Thu Dau Mot, Binh Duong",
+            Fullname = "Nguyen Mai Hoang Oanh",
+            Username = "Oanh",
+            Password = SecurityExtension.HashPassword<User>("Oanh123", salt),
+            Role = UserRole.Member,
             Salt = salt,
             Status = UserStatus.Active,
-            PhoneNumber = "0977264752",
+            PhoneNumber = "0928498293",
         };
 
         await _unitOfWork.UserRepository.InsertAsync(user, Guid.Empty, DateTime.UtcNow);

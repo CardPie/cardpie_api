@@ -31,7 +31,7 @@ public class AuthService : BaseService, IAuthService
 
         if (user == null)
         {
-            throw new ApiException(StatusCode.NOT_FOUND);
+            throw new ApiException("Not existed user",StatusCode.NOT_FOUND);
         }
         
         // Check status
@@ -41,7 +41,7 @@ public class AuthService : BaseService, IAuthService
         // Check password
         if (!accountCredentialLoginDto.Password.VerifyPassword<User>(user.Salt!, user.Password!))
         {
-            throw new ApiException("Invalid username or password", StatusCode.BAD_REQUEST);
+            throw new ApiException("Incorrect password", StatusCode.BAD_REQUEST);
         }
         
         var claims = SetClaims(user);

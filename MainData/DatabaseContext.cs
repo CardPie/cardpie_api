@@ -17,6 +17,7 @@ public class DatabaseContext : DbContext
     public DbSet<Folder> Folders { get; set; }
     public DbSet<Post> Posts { get; set; }
     public DbSet<Interaction> Interactions { get; set; }
+    public DbSet<SavedDeck> SavedDecks { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -28,5 +29,6 @@ public class DatabaseContext : DbContext
         modelBuilder.ApplyConfiguration(new FolderConfig());
         modelBuilder.ApplyConfiguration(new PostConfig());
         modelBuilder.ApplyConfiguration(new InteractionConfig());
+        modelBuilder.ApplyConfiguration(new SavedDeckConfig());
     }
 }
