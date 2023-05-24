@@ -21,6 +21,7 @@ public class DetailDeckDto : BaseDto
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public bool IsPublic { get; set; }
+    public int TotalCard { get; set; }
     public DeckColor Color { get; set; }
     public DeckOrder Order { get; set; }
     public Guid UserId { get; set; }

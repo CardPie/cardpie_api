@@ -36,7 +36,15 @@ public class FolderService : BaseService, IFolderService
         }, folderQuery.OrderBy, folderQuery.Skip(), folderQuery.PageSize);
 
         folderDtos.Items = await _mapperRepository.MapCreator(folderDtos.Items.ToList());
+
+        var decks = MainUnitOfWork.DeckRepository.GetQuery();
         
+        foreach(var folder in folderDtos.Items)
+        {
+            var deckCount = decks.Where(c => c.FolderId == folder.Id)?.Count() ?? 0;
+            folder.TotalDeck = deckCount;
+        }
+
         return ApiResponses<FolderDto>.Success(
             folderDtos.Items,
             folderDtos.TotalCount,
@@ -84,7 +92,17 @@ public class FolderService : BaseService, IFolderService
             x => x.FolderId == folderDto.Id
         }, null);
 
+        var cards = MainUnitOfWork.FlashCardRepository.GetQuery();
+
+        foreach (var deck in deckDtos)
+        {
+            var cardCount = cards.Where(x => x!.DeckId == deck!.Id)?.Count() ?? 0;
+            deck.TotalCard = cardCount;
+        }
+
         folderDto.ListDeck = deckDtos;
+        folderDto.TotalDeck = deckDtos.Count();
+        folderDto.TotalCard = deckDtos.Sum(x => x.TotalCard);
 
         folderDto = await _mapperRepository.MapCreator(folderDto);
 

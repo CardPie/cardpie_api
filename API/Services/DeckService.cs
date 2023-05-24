@@ -17,6 +17,7 @@ public interface IDeckService : IBaseService
     public Task<ApiResponse<DetailDeckDto>> UpdateDeck(Guid id, UpdateDeckDto updateDeckDto);
     public Task<ApiResponses<DeckDto>> GetOwnDeck(DeckQueryDto deckQueryDto);
     public Task<ApiResponses<DeckDto>> GetRecommendDecks(DeckQueryDto deckQueryDto);
+    public Task<ApiResponse> UpdateDeckView(Guid id);
 }
 
 public class DeckService : BaseService, IDeckService
@@ -35,6 +36,14 @@ public class DeckService : BaseService, IDeckService
         }, deckQueryDto.OrderBy, deckQueryDto.Skip(), deckQueryDto.PageSize);
 
         decks.Items = await _mapperRepository.MapCreator(decks.Items.ToList());
+
+        var cards = MainUnitOfWork.FlashCardRepository.GetQuery();
+        
+        foreach (var deck in decks.Items)
+        {
+            var cardCount = cards.Where(c => c.DeckId == deck.Id)?.Count() ?? 0;
+            deck.TotalCard = cardCount;
+        }
 
         return ApiResponses<DeckDto>.Success(
             decks.Items,
@@ -65,6 +74,7 @@ public class DeckService : BaseService, IDeckService
             }, null);
 
         deckDto.ListFlashCards = flashCards;
+        deckDto.TotalCard = flashCards.Count();
 
         var studySessions = await MainUnitOfWork.StudySessionRepository.FindAsync<StudySessionDto>(
             new Expression<Func<StudySession, bool>>[]
@@ -205,5 +215,22 @@ public class DeckService : BaseService, IDeckService
             (int)Math.Ceiling(filteredDecks.Count / (double)deckQueryDto.PageSize)
         );
     }
-    
+
+    public async Task<ApiResponse> UpdateDeckView(Guid id)
+    {
+        var deck = await MainUnitOfWork.DeckRepository.FindOneAsync(new Expression<Func<Deck, bool>>[]
+        {
+            x => !x.DeletedAt.HasValue,
+            x => x.Id == id
+        });
+        
+        if (deck == null)
+            throw new ApiException("Not found", StatusCode.NOT_FOUND);
+
+        deck.View++;
+        if (!await MainUnitOfWork.DeckRepository.UpdateAsync(deck, AccountId ?? Guid.Empty, CurrentDate))
+            throw new ApiException();
+        
+        return ApiResponse.Success();
+    }
 }
