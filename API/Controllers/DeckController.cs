@@ -1,6 +1,7 @@
 ﻿using API.Dtos;
 using API.Services;
 using AppCore.Models;
+using MainData.Middlewares;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -55,5 +56,13 @@ public class DeckController : BaseController
     public async Task<ApiResponses<DeckDto>> GetRecommendDeck([FromQuery]DeckQueryDto deckQueryDto)
     {
         return await _deckService.GetRecommendDecks(deckQueryDto);
+    }
+    
+    [SwaggerOperation("Update view for decks")]
+    [HttpGet("{id:guid}/view")]
+    [AllowAnonymous]
+    public async Task<ApiResponse> UpdateViewDeck(Guid id)
+    {
+        return await _deckService.UpdateDeckView(id);
     }
 }

@@ -6,11 +6,15 @@ namespace API.Dtos;
 public class FolderDto : BaseDto
 {
     public string FolderName { get; set; } = string.Empty;
+    public int TotalDeck { get; set; }
+    public int TotalCard { get; set; }
 }
 
 public class DetailFolderDto : BaseDto
 {
     public string FolderName { get; set; } = string.Empty;
+    public int TotalDeck { get; set; }
+    public int TotalCard { get; set; }
     public List<DeckDto>? ListDeck { get; set; }
 }
 
