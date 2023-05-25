@@ -7,35 +7,28 @@ namespace MainData.Entities;
 public class FlashCard : BaseEntity
 {
     public Guid DeckId { get; set; }
-    public string Title { get; set; } = string.Empty;
-    public string Content { get; set; } = string.Empty;
-    public string? SoundUrl { get; set; }
-    public string? ImageUrl { get; set; }
-    public string TitleBackOne { get; set; } = string.Empty;
-    public string ContentBackOne { get; set; } = string.Empty;
-    public string? TitleBackTwo { get; set; }
-    public string? ContentBackTwo { get; set; }
-    public string SoundUrlBack { get; set; } = string.Empty;
-    public string ImageUrlBack { get; set; } = string.Empty;
-
-    //Relationship
-    //public virtual Deck Deck { get; set; } = new Deck();
+    public string FrontContent { get; set; } = string.Empty;
+    public string? FrontDescription { get; set; } = string.Empty;
+    public string? FrontSoundUrl { get; set; }
+    public string? FrontImageUrl { get; set; }
+    public string BackContent { get; set; } = string.Empty;
+    public string? BackDescription { get; set; } = string.Empty;
+    public string? BackSoundUrl { get; set; } = string.Empty;
+    public string? BackImageUrl { get; set; } = string.Empty;
 }
 
 public class FlashCardConfig : IEntityTypeConfiguration<FlashCard>
 {
     public void Configure(EntityTypeBuilder<FlashCard> builder)
     {
-        builder.Property(a => a.Title).IsRequired();
-        builder.Property(a => a.Content).IsRequired();
-        builder.Property(a => a.ImageUrl).IsRequired(false);
-        builder.Property(a => a.SoundUrl).IsRequired(false);
-        builder.Property(a => a.TitleBackOne).IsRequired();
-        builder.Property(a => a.ContentBackOne).IsRequired();
-        builder.Property(a => a.TitleBackTwo).IsRequired();
-        builder.Property(a => a.ContentBackTwo).IsRequired(false);
-        builder.Property(a => a.ImageUrlBack).IsRequired(false);
-        builder.Property(a => a.SoundUrlBack).IsRequired(false);
+        builder.Property(a => a.FrontContent).IsRequired();
+        builder.Property(a => a.FrontImageUrl).IsRequired(false);
+        builder.Property(a => a.FrontSoundUrl).IsRequired(false);
+        builder.Property(a => a.FrontDescription).IsRequired(false);
+        builder.Property(a => a.BackContent).IsRequired();
+        builder.Property(a => a.BackDescription).IsRequired(false);
+        builder.Property(a => a.BackImageUrl).IsRequired(false);
+        builder.Property(a => a.BackSoundUrl).IsRequired(false);
         builder.Property(a => a.DeckId).IsRequired().HasDefaultValue(Guid.Empty);
     }
 }
