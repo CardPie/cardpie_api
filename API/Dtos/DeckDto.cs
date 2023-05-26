@@ -18,6 +18,7 @@ public class DeckDto : BaseDto
 public class DetailDeckDto : BaseDto
 {
     public Guid FolderId { get; set; }
+    public string FolderName { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public bool IsPublic { get; set; }
@@ -35,6 +36,7 @@ public class DetailDeckDto : BaseDto
     public List<FlashCardDto> ListFlashCards { get; set; } = new List<FlashCardDto>();
     public List<StudySessionDto> ListStudySessions { get; set; } = new List<StudySessionDto>();
 }
+
 
 public class CreateDeckDto
 {

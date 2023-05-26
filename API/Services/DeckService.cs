@@ -87,6 +87,14 @@ public class DeckService : BaseService, IDeckService
 
         deckDto.ListStudySessions = studySessions;
 
+        var folderDto = await MainUnitOfWork.FolderRepository.FindOneAsync(new Expression<Func<Folder, bool>>[]
+        {
+            x => x.DeletedAt.HasValue!,
+            x => x.Id == deckDto.FolderId,
+        });
+
+        deckDto.FolderName = folderDto!.FolderName;
+
         return ApiResponse<DetailDeckDto>.Success(deckDto);
     }
 
