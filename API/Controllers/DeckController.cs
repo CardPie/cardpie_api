@@ -65,4 +65,11 @@ public class DeckController : BaseController
     {
         return await _deckService.UpdateDeckView(id);
     }
+    
+    [SwaggerOperation("Delete deck")]
+    [HttpDelete("{id:guid}")]
+    public async Task<ApiResponse> DeleteDeck(Guid id)
+    {
+        return await _deckService.DeleteDeck(id);
+    }
 }

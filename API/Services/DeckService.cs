@@ -18,6 +18,7 @@ public interface IDeckService : IBaseService
     public Task<ApiResponses<DeckDto>> GetOwnDeck(DeckQueryDto deckQueryDto);
     public Task<ApiResponses<DeckDto>> GetRecommendDecks(DeckQueryDto deckQueryDto);
     public Task<ApiResponse> UpdateDeckView(Guid id);
+    public Task<ApiResponse> DeleteDeck(Guid id);
 }
 
 public class DeckService : BaseService, IDeckService
@@ -226,10 +227,30 @@ public class DeckService : BaseService, IDeckService
         
         if (deck == null)
             throw new ApiException("Not found", StatusCode.NOT_FOUND);
+        
+        if (deck.CreatorId != AccountId)
+            throw new ApiException("You can't not delete other's deck", StatusCode.BAD_REQUEST);
 
         deck.View++;
         if (!await MainUnitOfWork.DeckRepository.UpdateAsync(deck, AccountId ?? Guid.Empty, CurrentDate))
             throw new ApiException();
+        
+        return ApiResponse.Success();
+    }
+
+    public async Task<ApiResponse> DeleteDeck(Guid id)
+    {
+        var deck = await MainUnitOfWork.DeckRepository.FindOneAsync(new Expression<Func<Deck, bool>>[]
+        {
+            x => !x.DeletedAt.HasValue,
+            x => x.Id == id
+        });
+        
+        if (deck == null)
+            throw new ApiException("Not found", StatusCode.NOT_FOUND);
+
+        if (!await MainUnitOfWork.DeckRepository.DeleteAsync(deck, AccountId, CurrentDate))
+            throw new ApiException("Delete fail", StatusCode.SERVER_ERROR);
         
         return ApiResponse.Success();
     }
