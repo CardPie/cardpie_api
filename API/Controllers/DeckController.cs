@@ -16,6 +16,13 @@ public class DeckController : BaseController
         _deckService = deckService;
     }
 
+    [SwaggerOperation("Get recently seen decks")]
+    [HttpGet("recently-seen")]
+    public async Task<ApiResponses<DeckDto>> GetRecentlySeenDecks([FromQuery]DeckQueryDto deckQueryDto)
+    {
+        return await _deckService.GetRecentlySeenDecks(deckQueryDto);
+    }
+    
     [SwaggerOperation("Get list deck")]
     [HttpGet]
     public async Task<ApiResponses<DeckDto>> GetDecks([FromQuery]DeckQueryDto deckQueryDto)
@@ -64,5 +71,12 @@ public class DeckController : BaseController
     public async Task<ApiResponse> UpdateViewDeck(Guid id)
     {
         return await _deckService.UpdateDeckView(id);
+    }
+    
+    [SwaggerOperation("Delete deck")]
+    [HttpDelete("{id:guid}")]
+    public async Task<ApiResponse> DeleteDeck(Guid id)
+    {
+        return await _deckService.DeleteDeck(id);
     }
 }

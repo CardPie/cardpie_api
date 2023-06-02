@@ -18,6 +18,7 @@ public class DeckDto : BaseDto
 public class DetailDeckDto : BaseDto
 {
     public Guid FolderId { get; set; }
+    public string FolderName { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public bool IsPublic { get; set; }
@@ -35,6 +36,7 @@ public class DetailDeckDto : BaseDto
     public List<FlashCardDto> ListFlashCards { get; set; } = new List<FlashCardDto>();
     public List<StudySessionDto> ListStudySessions { get; set; } = new List<StudySessionDto>();
 }
+
 
 public class CreateDeckDto
 {
@@ -70,16 +72,14 @@ public class UpdateDeckDto
 
 public class CreateFlashCardWithDeckDto
 {
-    [Required] public string Title { get; set; } 
-    [Required] public string Content { get; set; } 
-    public string? SoundUrl { get; set; }
-    public string? ImageUrl { get; set; } 
-    [Required] public string TitleBackOne { get; set; }
-    [Required] public string ContentBackOne { get; set; } 
-    public string TitleBackTwo { get; set; } 
-    public string ContentBackTwo { get; set; } 
-    public string? SoundUrlBack { get; set; } 
-    public string? ImageUrlBack { get; set; }
+    [Required] public string FrontContent { get; set; } = string.Empty;
+    public string? FrontDescription { get; set; } = string.Empty;
+    public string? FrontSoundUrl { get; set; }
+    public string? FrontImageUrl { get; set; }
+    [Required] public string BackContent { get; set; } = string.Empty;
+    public string? BackDescription { get; set; } = string.Empty;
+    public string? BackSoundUrl { get; set; } = string.Empty;
+    public string? BackImageUrl { get; set; } = string.Empty;
 }
 
 public class DeckQueryDto : BaseQueryDto

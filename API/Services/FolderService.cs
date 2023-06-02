@@ -19,6 +19,8 @@ public interface IFolderService : IBaseService
     Task<ApiResponse<DetailFolderDto>> CreateFolder(CreateFolder createFolder);
     
     Task<ApiResponse<DetailFolderDto>> UpdateFolder(Guid id, UpdateFolder updateFolder);
+    
+    Task<ApiResponse> DeleteFolder(Guid id);
 
 }
 
@@ -140,5 +142,25 @@ public class FolderService : BaseService, IFolderService
 
         return await GetDetail(folderDto.Id);
     }
-    
+
+    public async Task<ApiResponse> DeleteFolder(Guid id)
+    {
+        var folderDto = await MainUnitOfWork.FolderRepository.FindOneAsync(
+            new Expression<Func<Folder, bool>>[]
+            {
+                x => !x.DeletedAt.HasValue,
+                x => x.Id == id
+            });
+
+        if (folderDto == null)
+            throw new ApiException("Not found", StatusCode.NOT_FOUND);
+
+        if (folderDto.CreatorId != AccountId)
+            throw new ApiException("You can't delete other's folder", StatusCode.BAD_REQUEST);
+
+        if (!await MainUnitOfWork.FolderRepository.DeleteAsync(folderDto, AccountId, CurrentDate))
+            throw new ApiException("Delete fail", StatusCode.SERVER_ERROR);
+
+        return ApiResponse.Success();
+    }
 }
