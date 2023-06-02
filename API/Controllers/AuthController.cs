@@ -41,6 +41,14 @@ public class AuthController : BaseController
         return await _authenticationService.RefreshToken(authRefreshDto);
     }
     
+    [HttpPost("register")]
+    [AllowAnonymous]
+    [SwaggerOperation("Register account")]
+    public async Task<ApiResponse> Register(RegisterDto registerDto)
+    {
+        return await _authenticationService.Register(registerDto);
+    }
+    
     [HttpGet("sign-in-google")]
     [AllowAnonymous]
     public IActionResult GoogleLogin()
