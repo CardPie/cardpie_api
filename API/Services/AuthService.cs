@@ -12,8 +12,8 @@ namespace API.Services;
 public interface IAuthService : IBaseService
 {
     Task<ApiResponse<AuthDto>> SignIn(AccountCredentialLoginDto accountCredentialLoginDto);
-
     Task<ApiResponse<AuthDto>> RefreshToken(AuthRefreshDto authRefreshDto);
+    Task<ApiResponse> Register(RegisterDto registerDto);
     Task<ApiResponse> RevokeToken();
 }
 
@@ -136,6 +136,49 @@ public class AuthService : BaseService, IAuthService
         });
     }
 
+    public async Task<ApiResponse> Register(RegisterDto registerDto)
+    {
+
+        var existed = await MainUnitOfWork.UserRepository.FindAsync(new Expression<Func<User, bool>>[]
+        {
+            x => !x.DeletedAt.HasValue,
+            x => x.PhoneNumber == registerDto.PhoneNumber
+        }, null);
+
+        if (existed.Any())
+            throw new ApiException("This phone number has been used", StatusCode.BAD_REQUEST);
+        
+        existed = await MainUnitOfWork.UserRepository.FindAsync(new Expression<Func<User, bool>>[]
+        {
+            x => !x.DeletedAt.HasValue,
+            x => x.Email == registerDto.Email
+        }, null);
+
+        if (existed.Any())
+            throw new ApiException("This email has been used", StatusCode.BAD_REQUEST);
+        
+        existed = await MainUnitOfWork.UserRepository.FindAsync(new Expression<Func<User, bool>>[]
+        {
+            x => !x.DeletedAt.HasValue,
+            x => x.Username == registerDto.Username
+        }, null);
+
+        if (existed.Any())
+            throw new ApiException("This username has been used", StatusCode.BAD_REQUEST);
+        
+        var user = registerDto.ProjectTo<RegisterDto, User>();
+        var salt = SecurityExtension.GenerateSalt();
+        user.Password = SecurityExtension.HashPassword<User>(registerDto.Password, salt);
+        user.Status = UserStatus.Active;
+        user.Role = UserRole.Member;
+        user.Salt = salt;
+
+        if (!await MainUnitOfWork.UserRepository.InsertAsync(user, Guid.Empty, CurrentDate))
+            throw new ApiException("Register fail", StatusCode.SERVER_ERROR);
+
+        return ApiResponse.Success();
+    }
+
     public async Task<ApiResponse> RevokeToken()
     {
         //Get token from header
@@ -180,8 +223,7 @@ public class AuthService : BaseService, IAuthService
 
         return ApiResponse.Success();
     }
-
-
+    
     private IEnumerable<Claim> SetClaims(User account)
     {
         // Create token

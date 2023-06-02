@@ -5,7 +5,6 @@ namespace API.Dtos;
 
 public class FlashCardDto : BaseDto
 {
-    //public Guid DeckId { get; set; }
     public string FrontContent { get; set; } = string.Empty;
     public string? FrontDescription { get; set; } = string.Empty;
     public string? FrontSoundUrl { get; set; }
