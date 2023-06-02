@@ -37,7 +37,7 @@ public class FolderController : BaseController
     }
     
      
-    [SwaggerOperation("Get detail of folder")]
+    [SwaggerOperation("Create new folder")]
     [HttpPost]
     public async Task<ApiResponse<DetailFolderDto>> CreatedFolder(CreateFolder folder)
     {
@@ -49,5 +49,12 @@ public class FolderController : BaseController
     public async Task<ApiResponse<DetailFolderDto>> UpdateFolder(Guid id, UpdateFolder folder)
     {
         return await _folderService.UpdateFolder(id, folder);
+    }
+    
+    [SwaggerOperation("Delete folder")]
+    [HttpDelete("{id:guid}")]
+    public async Task<ApiResponse> DeleteFolder(Guid id)
+    {
+        return await _folderService.DeleteFolder(id);
     }
 }

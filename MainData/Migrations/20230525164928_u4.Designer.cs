@@ -3,6 +3,7 @@ using System;
 using MainData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MainData.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20230525164928_u4")]
+    partial class u4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -253,13 +256,13 @@ namespace MainData.Migrations
                     b.Property<Guid?>("CreatorId")
                         .HasColumnType("char(36)");
 
+                    b.Property<Guid?>("DeckId")
+                        .HasColumnType("char(36)");
+
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime(6)");
 
                     b.Property<Guid?>("EditorId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<Guid?>("FolderId")
                         .HasColumnType("char(36)");
 
                     b.Property<int>("Like")

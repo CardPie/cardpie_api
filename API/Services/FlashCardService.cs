@@ -80,16 +80,15 @@ public class FlashCardService : BaseService, IFlashCardService
         if (flashcardDto.CreatorId != AccountId)
             throw new ApiException("Can't update other's card", StatusCode.BAD_REQUEST);
         
-        flashcardDto.Title = updateFlashCardDto.Title ?? flashcardDto.Title;
-        flashcardDto.Content = updateFlashCardDto.Content ?? flashcardDto.Content;
-        flashcardDto.ContentBackOne = updateFlashCardDto.ContentBackOne ?? flashcardDto.ContentBackOne;
-        flashcardDto.TitleBackOne = updateFlashCardDto.TitleBackOne ?? flashcardDto.TitleBackOne;
-        flashcardDto.TitleBackTwo = updateFlashCardDto.TitleBackTwo ?? flashcardDto.TitleBackTwo;
-        flashcardDto.ContentBackTwo = updateFlashCardDto.ContentBackTwo ?? flashcardDto.ContentBackTwo;
-        flashcardDto.ImageUrl = updateFlashCardDto.ImageUrl ?? flashcardDto.ImageUrl;
-        flashcardDto.ImageUrlBack = updateFlashCardDto.ImageUrlBack ?? flashcardDto.ImageUrlBack;
-        flashcardDto.SoundUrl = updateFlashCardDto.SoundUrl ?? flashcardDto.SoundUrl;
-        flashcardDto.SoundUrlBack = updateFlashCardDto.SoundUrlBack ?? flashcardDto.SoundUrlBack;
+        flashcardDto.FrontContent = updateFlashCardDto.FrontContent ?? flashcardDto.FrontContent;
+        flashcardDto.FrontDescription = updateFlashCardDto.FrontDescription ?? flashcardDto.FrontDescription;
+        flashcardDto.FrontImageUrl = updateFlashCardDto.FrontImageUrl ?? flashcardDto.FrontImageUrl;
+        flashcardDto.FrontSoundUrl = updateFlashCardDto.FrontSoundUrl ?? flashcardDto.FrontSoundUrl;
+        flashcardDto.BackContent = updateFlashCardDto.BackContent ?? flashcardDto.BackContent;
+        flashcardDto.BackDescription = updateFlashCardDto.BackDescription ?? flashcardDto.BackDescription;
+        flashcardDto.BackImageUrl = updateFlashCardDto.BackImageUrl ?? flashcardDto.BackImageUrl;
+        flashcardDto.BackSoundUrl = updateFlashCardDto.BackSoundUrl ?? flashcardDto.BackSoundUrl;
+        //flashcardDto.DeckId = updateFlashCardDto.DeckId ?? flashcardDto.DeckId;
 
         if (!await MainUnitOfWork.FlashCardRepository.UpdateAsync(flashcardDto, AccountId, CurrentDate))
             throw new ApiException("Update fail", StatusCode.SERVER_ERROR);
