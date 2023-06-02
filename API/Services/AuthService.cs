@@ -171,6 +171,7 @@ public class AuthService : BaseService, IAuthService
         user.Password = SecurityExtension.HashPassword<User>(registerDto.Password, salt);
         user.Status = UserStatus.Active;
         user.Role = UserRole.Member;
+        user.Salt = salt;
 
         if (!await MainUnitOfWork.UserRepository.InsertAsync(user, Guid.Empty, CurrentDate))
             throw new ApiException("Register fail", StatusCode.SERVER_ERROR);
