@@ -7,7 +7,7 @@ namespace MainData.Entities;
 public class Post : BaseEntity
 {
     public Guid UserId { get; set; }
-    public Guid? DeckId { get; set; }
+    public Guid? FolderId { get; set; }
     public string Content { get; set; } = string.Empty;
     public int Like { get; set; }
     public int Report { get; set; }
@@ -32,7 +32,7 @@ public class PostConfig : IEntityTypeConfiguration<Post>
     public void Configure(EntityTypeBuilder<Post> builder)
     {
         builder.Property(a => a.UserId).IsRequired();
-        builder.Property(a => a.DeckId).IsRequired(false);
+        builder.Property(a => a.FolderId).IsRequired(false);
         builder.Property(a => a.Content).IsRequired();
         builder.Property(a => a.Like).IsRequired();
         builder.Property(a => a.Report).IsRequired();

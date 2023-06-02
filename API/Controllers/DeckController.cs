@@ -16,6 +16,13 @@ public class DeckController : BaseController
         _deckService = deckService;
     }
 
+    [SwaggerOperation("Get recently seen decks")]
+    [HttpGet("recently-seen")]
+    public async Task<ApiResponses<DeckDto>> GetRecentlySeenDecks([FromQuery]DeckQueryDto deckQueryDto)
+    {
+        return await _deckService.GetRecentlySeenDecks(deckQueryDto);
+    }
+    
     [SwaggerOperation("Get list deck")]
     [HttpGet]
     public async Task<ApiResponses<DeckDto>> GetDecks([FromQuery]DeckQueryDto deckQueryDto)

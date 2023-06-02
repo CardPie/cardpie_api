@@ -13,3 +13,8 @@ public class StudySessionDto : BaseDto
     public int IncorrectCount { get; set; }
     public bool IsCompleted { get; set; }
 }
+
+public class StudySessionQueryDto : BaseQueryDto
+{
+    
+}

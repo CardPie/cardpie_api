@@ -17,6 +17,7 @@ public interface IDeckService : IBaseService
     public Task<ApiResponse<DetailDeckDto>> UpdateDeck(Guid id, UpdateDeckDto updateDeckDto);
     public Task<ApiResponses<DeckDto>> GetOwnDeck(DeckQueryDto deckQueryDto);
     public Task<ApiResponses<DeckDto>> GetRecommendDecks(DeckQueryDto deckQueryDto);
+    public Task<ApiResponses<DeckDto>> GetRecentlySeenDecks(DeckQueryDto deckQueryDto);
     public Task<ApiResponse> UpdateDeckView(Guid id);
     public Task<ApiResponse> DeleteDeck(Guid id);
 }
@@ -89,11 +90,14 @@ public class DeckService : BaseService, IDeckService
 
         var folderDto = await MainUnitOfWork.FolderRepository.FindOneAsync(new Expression<Func<Folder, bool>>[]
         {
-            x => x.DeletedAt.HasValue!,
+            x => !x.DeletedAt.HasValue,
             x => x.Id == deckDto.FolderId,
         });
 
-        deckDto.FolderName = folderDto!.FolderName;
+        if (folderDto != null)
+        {
+            deckDto.FolderName = folderDto.FolderName;
+        }
 
         return ApiResponse<DetailDeckDto>.Success(deckDto);
     }
@@ -225,6 +229,44 @@ public class DeckService : BaseService, IDeckService
         );
     }
 
+    public async Task<ApiResponses<DeckDto>> GetRecentlySeenDecks(DeckQueryDto deckQueryDto)
+    {
+        var studySessions = await MainUnitOfWork.StudySessionRepository.FindAsync(
+            new Expression<Func<StudySession, bool>>[]
+            {
+                x => !x.DeletedAt.HasValue,
+                x => x.UserId == AccountId
+            }, deckQueryDto.OrderBy);
+        
+        var deckIds = studySessions.Select(s => s.DeckId).ToList();
+
+        var recentlySeenDecks = MainUnitOfWork.DeckRepository.GetQuery();
+
+        if (deckIds.Any())
+        {
+            recentlySeenDecks = recentlySeenDecks.Where(d => deckIds.Contains(d.Id));
+        }
+
+        //var allRecentlySeenDecks = await recentlySeenDecks.ToListAsync();
+        // Count items
+        var totalCount = recentlySeenDecks.Count();
+        recentlySeenDecks = recentlySeenDecks
+            .Skip(deckQueryDto.Skip())
+            .Take(deckQueryDto.PageSize);
+
+        var decks = (await recentlySeenDecks.ToListAsync()).ProjectTo<Deck, DeckDto>();
+
+        decks = await _mapperRepository.MapCreator(decks);
+
+        // Return data
+        return ApiResponses<DeckDto>.Success(
+            decks, 
+            totalCount, 
+            deckQueryDto.PageSize, 
+            deckQueryDto.Skip(), 
+            (int)Math.Ceiling(totalCount/ (double)deckQueryDto.PageSize));
+    }
+
     public async Task<ApiResponse> UpdateDeckView(Guid id)
     {
         var deck = await MainUnitOfWork.DeckRepository.FindOneAsync(new Expression<Func<Deck, bool>>[]
@@ -235,9 +277,6 @@ public class DeckService : BaseService, IDeckService
         
         if (deck == null)
             throw new ApiException("Not found", StatusCode.NOT_FOUND);
-        
-        if (deck.CreatorId != AccountId)
-            throw new ApiException("You can't not delete other's deck", StatusCode.BAD_REQUEST);
 
         deck.View++;
         if (!await MainUnitOfWork.DeckRepository.UpdateAsync(deck, AccountId ?? Guid.Empty, CurrentDate))
