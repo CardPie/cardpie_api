@@ -5,7 +5,7 @@ namespace API.Dtos;
 
 public class AccountCredentialLoginDto
 {
-    [Required] public string Username { get; set; } = string.Empty;
+    [Required] public string Email { get; set; } = string.Empty;
     [Required] public string Password { get; set; } = string.Empty;
 }
 
@@ -25,16 +25,10 @@ public class AuthDto
 
 public class RegisterDto
 {
+    [Required] public AccountType AccountType { get; set; }
     [Required] public string Fullname { get; set; } = string.Empty;
-    public string Avatar { get; set; } = string.Empty;
     [Required]
     public string Email { get; set; } = string.Empty;
-    [Required]
-    public string PhoneNumber { get; set; } = string.Empty;
-    [Required]
-    public string Address { get; set; } = string.Empty;
-    [Required]
-    public string Username { get; set; } = string.Empty;
     [Required]
     public string Password { get; set; } = string.Empty;
 }
