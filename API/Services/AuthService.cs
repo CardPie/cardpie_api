@@ -26,7 +26,7 @@ public class AuthService : BaseService, IAuthService
     {
         var user = await MainUnitOfWork.UserRepository.FindOneAsync(new Expression<Func<User, bool>>[]
         {
-            x => !x.DeletedAt.HasValue && x.Username == accountCredentialLoginDto.Username
+            x => !x.DeletedAt.HasValue && x.Email == accountCredentialLoginDto.Email
         });
 
         if (user == null)
@@ -138,17 +138,7 @@ public class AuthService : BaseService, IAuthService
 
     public async Task<ApiResponse> Register(RegisterDto registerDto)
     {
-
         var existed = await MainUnitOfWork.UserRepository.FindAsync(new Expression<Func<User, bool>>[]
-        {
-            x => !x.DeletedAt.HasValue,
-            x => x.PhoneNumber == registerDto.PhoneNumber
-        }, null);
-
-        if (existed.Any())
-            throw new ApiException("This phone number has been used", StatusCode.BAD_REQUEST);
-        
-        existed = await MainUnitOfWork.UserRepository.FindAsync(new Expression<Func<User, bool>>[]
         {
             x => !x.DeletedAt.HasValue,
             x => x.Email == registerDto.Email
@@ -156,15 +146,6 @@ public class AuthService : BaseService, IAuthService
 
         if (existed.Any())
             throw new ApiException("This email has been used", StatusCode.BAD_REQUEST);
-        
-        existed = await MainUnitOfWork.UserRepository.FindAsync(new Expression<Func<User, bool>>[]
-        {
-            x => !x.DeletedAt.HasValue,
-            x => x.Username == registerDto.Username
-        }, null);
-
-        if (existed.Any())
-            throw new ApiException("This username has been used", StatusCode.BAD_REQUEST);
         
         var user = registerDto.ProjectTo<RegisterDto, User>();
         var salt = SecurityExtension.GenerateSalt();
@@ -215,6 +196,7 @@ public class AuthService : BaseService, IAuthService
             throw new ApiException(MessageKey.ServerError, StatusCode.SERVER_ERROR);
         }
 
+        account.LastLoginAt = CurrentDate;
         // Update account
         if (!(await MainUnitOfWork.UserRepository.UpdateAsync(account, account.Id, CurrentDate)))
         {
