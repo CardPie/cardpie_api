@@ -84,4 +84,5 @@ public class CreateFlashCardWithDeckDto
 
 public class DeckQueryDto : BaseQueryDto
 {
+    public string DeckName { get; set; } = string.Empty;
 }

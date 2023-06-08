@@ -19,13 +19,13 @@ public class DetailSavedDeckDto : BaseDto
     public string Note { get; set; } = string.Empty;
 }
 
-public class CreateSavedDeckDto : BaseDto
+public class CreateSavedDeckDto
 {
     public Guid DeckId { get; set; }
-    public string Note { get; set; } = string.Empty;
+    public string? Note { get; set; }
 }
 
-public class UpdateSavedDeckDto : BaseDto
+public class UpdateSavedDeckDto
 {
     public string? Note { get; set; } = string.Empty;
 }
