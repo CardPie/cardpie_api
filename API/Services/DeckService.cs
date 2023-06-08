@@ -34,7 +34,9 @@ public class DeckService : BaseService, IDeckService
         var decks = await MainUnitOfWork.DeckRepository.FindResultAsync<DeckDto>(new Expression<Func<Deck, bool>>[]
         {
             x => !x.DeletedAt.HasValue,
-            x => x.IsPublic
+            x => x.IsPublic,
+            x => string.IsNullOrEmpty(deckQueryDto.DeckName) || x.Name.ToLower()
+                .Contains(deckQueryDto.DeckName.Trim().ToLower()),
         }, deckQueryDto.OrderBy, deckQueryDto.Skip(), deckQueryDto.PageSize);
 
         decks.Items = await _mapperRepository.MapCreator(decks.Items.ToList());
@@ -189,7 +191,7 @@ public class DeckService : BaseService, IDeckService
 
         var deckIds = studySessions.Select(s => s.DeckId).ToList();
 
-        var recommendedDecks = MainUnitOfWork.DeckRepository.GetQuery();
+        var recommendedDecks = MainUnitOfWork.DeckRepository.GetQuery().Where(x => !x.DeletedAt.HasValue);
 
         if (deckIds.Any())
         {
@@ -198,7 +200,7 @@ public class DeckService : BaseService, IDeckService
 
         var allRecommendedDecks = await recommendedDecks.ToListAsync();
 
-        // Retrieve all the tags associated with the recommended decks
+        /*// Retrieve all the tags associated with the recommended decks
         var recommendedTags = allRecommendedDecks
             .SelectMany(d => d.Tags)
             .Distinct()
@@ -210,22 +212,30 @@ public class DeckService : BaseService, IDeckService
             .OrderByDescending(g => g.Count())
             .Select(g => g.Key)
             .Take(5) // Change the number as desired
-            .ToList();
+            .ToList();*/
 
-        var filteredDecks = allRecommendedDecks
-            .Where(d => d.Tags.Any(t => topTags.Contains(t)))
-            .OrderByDescending(d => d.View)
-            .Take(5)
-            .ToList();
+        // var filteredDecks = allRecommendedDecks
+        //     .Where(d => d.Tags.Any(t => topTags.Contains(t)))
+        //     .OrderByDescending(d => d.View)
+        //     .Take(5)
+        //     .ToList();
 
-        var deckDtos = filteredDecks.ProjectTo<Deck, DeckDto>();
+        var deckDtos = allRecommendedDecks.ProjectTo<Deck, DeckDto>();
+        deckDtos = await _mapperRepository.MapCreator(deckDtos);
+
+        var cards = MainUnitOfWork.FlashCardRepository.GetQuery().Where(x => !x.DeletedAt.HasValue);
+        foreach (var deck in deckDtos)
+        {
+            var cardCount = cards.Where(c => c.DeckId == deck.Id)?.Count() ?? 0;
+            deck.TotalCard = cardCount;
+        }
 
         return ApiResponses<DeckDto>.Success(
             deckDtos,
-            filteredDecks.Count,
+            deckDtos.Count,
             deckQueryDto.PageSize,
             deckQueryDto.Skip(),
-            (int)Math.Ceiling(filteredDecks.Count / (double)deckQueryDto.PageSize)
+            (int)Math.Ceiling(deckDtos.Count / (double)deckQueryDto.PageSize)
         );
     }
 
