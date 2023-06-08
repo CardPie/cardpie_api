@@ -27,7 +27,6 @@ public class InitController : BaseController
             Email = "doannh@gmail.com",
             Address = "Thu Duc, TP Ho Chi Minh",
             Fullname = "Nguyen Huu Doan",
-            Username = "covarom",
             Password = SecurityExtension.HashPassword<User>("covarom", salt),
             Role = UserRole.Admin,
             Salt = salt,
