@@ -12,22 +12,31 @@ public static class ExcelReader
     public static ImportDeckReaderDto DeckReader(Stream formStream)
     {
         var deck = new ImportDeckReaderDto();
-        var deep = 0;
 
         try
         {
             using (var workBook = new XLWorkbook(formStream))
             {
-                var nonEmptyDataRows = workBook.Worksheet(1).RowsUsed();
+                var worksheet = workBook.Worksheet(1);
+
+                // Get deck name from the first row
+                deck.Name = worksheet.Cell(1, 1).Value.ToString().Trim();
+
+                // Get deck description from the second row
+                deck.Description = worksheet.Cell(2, 1).Value.ToString().Trim();
+                
+                // Get deck IsPublic value from the third row
+                deck.IsPublic = bool.Parse(worksheet.Cell(3, 1).Value.ToString().Trim());
+
+                // Read card data starting from the third row
+                var nonEmptyDataRows = worksheet.RowsUsed().Skip(3);
                 foreach (var dataRow in nonEmptyDataRows)
                 {
-                    deep = dataRow.RowNumber();
-                    if (dataRow.RowNumber() < 3) continue;
                     deck.Cards.Add(new ImportCardReaderDto()
                     {
-                        FrontContent = dataRow.Cell(1).Value.ToString().RemoveSpace(),
-                        FrontDescription = dataRow.Cell(3).Value.ToString()?.Trim(),
-                        BackContent = dataRow.Cell(4).Value.ToString().Trim()
+                        FrontContent = dataRow.Cell(1).Value.ToString().Trim(),
+                        FrontDescription = dataRow.Cell(2).Value.ToString()?.Trim(),
+                        BackContent = dataRow.Cell(3).Value.ToString().Trim()
                     });
                 }
             }
@@ -39,5 +48,4 @@ public static class ExcelReader
             throw new ApiException(exception.Message);
         }
     }
-
 }

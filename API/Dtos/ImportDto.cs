@@ -4,7 +4,7 @@ namespace API.Dtos;
 
 public class ImportDeckReaderDto
 {
-    public string DeckName { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public bool IsPublic { get; set; }
     public List<ImportCardReaderDto> Cards { get; set; } = new List<ImportCardReaderDto>();

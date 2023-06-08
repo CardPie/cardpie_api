@@ -223,6 +223,12 @@ public class DeckService : BaseService, IDeckService
         var deckDtos = allRecommendedDecks.ProjectTo<Deck, DeckDto>();
         deckDtos = await _mapperRepository.MapCreator(deckDtos);
 
+        var cards = MainUnitOfWork.FlashCardRepository.GetQuery().Where(x => !x.DeletedAt.HasValue);
+        foreach (var deck in deckDtos)
+        {
+            var cardCount = cards.Where(c => c.DeckId == deck.Id)?.Count() ?? 0;
+            deck.TotalCard = cardCount;
+        }
 
         return ApiResponses<DeckDto>.Success(
             deckDtos,
