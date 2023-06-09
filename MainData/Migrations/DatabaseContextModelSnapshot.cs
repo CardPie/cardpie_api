@@ -106,7 +106,7 @@ namespace MainData.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Decks");
+                    b.ToTable("Decks", (string)null);
                 });
 
             modelBuilder.Entity("MainData.Entities.FlashCard", b =>
@@ -163,7 +163,7 @@ namespace MainData.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("FlashCards");
+                    b.ToTable("FlashCards", (string)null);
                 });
 
             modelBuilder.Entity("MainData.Entities.Folder", b =>
@@ -196,7 +196,7 @@ namespace MainData.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Folders");
+                    b.ToTable("Folders", (string)null);
                 });
 
             modelBuilder.Entity("MainData.Entities.Interaction", b =>
@@ -234,7 +234,7 @@ namespace MainData.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Interactions");
+                    b.ToTable("Interactions", (string)null);
                 });
 
             modelBuilder.Entity("MainData.Entities.Post", b =>
@@ -282,7 +282,7 @@ namespace MainData.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Posts");
+                    b.ToTable("Posts", (string)null);
                 });
 
             modelBuilder.Entity("MainData.Entities.SavedDeck", b =>
@@ -314,7 +314,7 @@ namespace MainData.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("SavedDecks");
+                    b.ToTable("SavedDecks", (string)null);
                 });
 
             modelBuilder.Entity("MainData.Entities.StudySession", b =>
@@ -370,7 +370,7 @@ namespace MainData.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("StudySessions");
+                    b.ToTable("StudySessions", (string)null);
                 });
 
             modelBuilder.Entity("MainData.Entities.Token", b =>
@@ -419,7 +419,7 @@ namespace MainData.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tokens");
+                    b.ToTable("Tokens", (string)null);
                 });
 
             modelBuilder.Entity("MainData.Entities.User", b =>
@@ -483,7 +483,7 @@ namespace MainData.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 #pragma warning restore 612, 618
         }
