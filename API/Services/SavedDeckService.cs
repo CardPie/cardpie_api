@@ -88,6 +88,17 @@ public class SavedDeckService : BaseService, ISavedDeckService
         var savedDeck = dto.ProjectTo<CreateSavedDeckDto, SavedDeck>();
         savedDeck.Id = Guid.NewGuid();
 
+        var deck = await MainUnitOfWork.DeckRepository.FindOneAsync(new Expression<Func<Deck, bool>>[]
+        {
+            x => !x.DeletedAt.HasValue
+        });
+
+        if (deck == null)
+            throw new ApiException("Deck not found", StatusCode.NOT_FOUND);
+        
+        if (deck.CreatorId == AccountId)
+            throw new ApiException("It's already your deck", StatusCode.BAD_REQUEST);
+
         if (!await MainUnitOfWork.SavedDeckRepository.InsertAsync(savedDeck, AccountId, CurrentDate))
             throw new ApiException("Can't save", StatusCode.SERVER_ERROR);
 
