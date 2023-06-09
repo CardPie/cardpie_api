@@ -185,12 +185,11 @@ public class DeckService : BaseService, IDeckService
     {
         var savedDeckId = MainUnitOfWork.SavedDeckRepository.GetQuery()
             .Where(d => d.CreatorId == AccountId && !d.DeletedAt.HasValue)
-            .Select(x => x.DeckId).ToList();
+            .Select(x => x.DeckId).ToList().Distinct();
 
         var decks = await MainUnitOfWork.DeckRepository.FindResultAsync(new Expression<Func<Deck, bool>>[]
         {
             x => !x.DeletedAt.HasValue,
-            x => x.CreatorId == AccountId,
             x => savedDeckId.Contains(x.Id)
         }, deckQueryDto.OrderBy, deckQueryDto.Skip(), deckQueryDto.PageSize);
         

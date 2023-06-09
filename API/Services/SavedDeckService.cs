@@ -88,6 +88,16 @@ public class SavedDeckService : BaseService, ISavedDeckService
         var savedDeck = dto.ProjectTo<CreateSavedDeckDto, SavedDeck>();
         savedDeck.Id = Guid.NewGuid();
 
+        var checkExisted = await MainUnitOfWork.SavedDeckRepository.FindOneAsync(new Expression<Func<SavedDeck, bool>>[]
+        {
+            x => !x.DeletedAt.HasValue,
+            x => x.CreatorId == AccountId,
+            x => x.DeckId == dto.DeckId
+        });
+
+        if (savedDeck != null)
+            throw new ApiException("You already save this deck", StatusCode.ALREADY_EXISTS);
+
         var deck = await MainUnitOfWork.DeckRepository.FindOneAsync(new Expression<Func<Deck, bool>>[]
         {
             x => !x.DeletedAt.HasValue
