@@ -16,6 +16,7 @@ public interface IDeckService : IBaseService
     public Task<ApiResponse<DetailDeckDto>> CreateDeck(CreateDeckDto createDeckDto);
     public Task<ApiResponse<DetailDeckDto>> UpdateDeck(Guid id, UpdateDeckDto updateDeckDto);
     public Task<ApiResponses<DeckDto>> GetOwnDeck(DeckQueryDto deckQueryDto);
+     public Task<ApiResponses<DeckDto>> GetOwnSavedDeck(DeckQueryDto deckQueryDto);
     public Task<ApiResponses<DeckDto>> GetRecommendDecks(DeckQueryDto deckQueryDto);
     public Task<ApiResponses<DeckDto>> GetRecentlySeenDecks(DeckQueryDto deckQueryDto);
     public Task<ApiResponse> UpdateDeckView(Guid id);
@@ -177,6 +178,37 @@ public class DeckService : BaseService, IDeckService
             deckQueryDto.PageSize,
             deckQueryDto.Skip(),
             (int)Math.Ceiling(decks.TotalCount / (double)deckQueryDto.PageSize)
+        );
+    }
+
+    public async Task<ApiResponses<DeckDto>> GetOwnSavedDeck(DeckQueryDto deckQueryDto)
+    {
+        var savedDeckId = MainUnitOfWork.SavedDeckRepository.GetQuery()
+            .Where(d => d.CreatorId == AccountId && !d.DeletedAt.HasValue)
+            .Select(x => x.DeckId).ToList().Distinct();
+
+        var decks = await MainUnitOfWork.DeckRepository.FindResultAsync(new Expression<Func<Deck, bool>>[]
+        {
+            x => !x.DeletedAt.HasValue,
+            x => savedDeckId.Contains(x.Id)
+        }, deckQueryDto.OrderBy, deckQueryDto.Skip(), deckQueryDto.PageSize);
+        
+        var deckDtos = decks.Items.ToList().ProjectTo<Deck, DeckDto>();
+        deckDtos = await _mapperRepository.MapCreator(deckDtos);
+
+        var cards = MainUnitOfWork.FlashCardRepository.GetQuery().Where(x => !x.DeletedAt.HasValue);
+        foreach (var deck in deckDtos)
+        {
+            var cardCount = cards.Where(c => c.DeckId == deck.Id)?.Count() ?? 0;
+            deck.TotalCard = cardCount;
+        }
+
+        return ApiResponses<DeckDto>.Success(
+            deckDtos,
+            deckDtos.Count,
+            deckQueryDto.PageSize,
+            deckQueryDto.Skip(),
+            (int)Math.Ceiling(deckDtos.Count / (double)deckQueryDto.PageSize)
         );
     }
 
