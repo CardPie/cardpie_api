@@ -65,6 +65,13 @@ public class DeckController : BaseController
         return await _deckService.GetRecommendDecks(deckQueryDto);
     }
     
+    [SwaggerOperation("Get saved decks for current logged in account")]
+    [HttpGet("saved")]
+    public async Task<ApiResponses<DeckDto>> GetSavedDeck([FromQuery]DeckQueryDto deckQueryDto)
+    {
+        return await _deckService.GetOwnSavedDeck(deckQueryDto);
+    }
+    
     [SwaggerOperation("Update view for decks")]
     [HttpGet("{id:guid}/view")]
     [AllowAnonymous]
