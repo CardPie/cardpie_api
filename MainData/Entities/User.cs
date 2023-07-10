@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace MainData.Entities;
 
-public class User : BaseEntity  
+public class User : BaseEntity
 {
     public string? Fullname { get; set; }
     public UserRole Role { get; set; }
@@ -16,9 +16,12 @@ public class User : BaseEntity
     public string? Address { get; set; }
     public string? Password { get; set; }
     public string? Salt { get; set; }
-    
+
+    public DateTime? ActivePremiumDate { get; set; }
+
+    public TypeOfPremium? TypeOfPremium { get; set; }
     public DateTime? FirstLoginAt { get; set; }
-    
+
     public DateTime? LastLoginAt { get; set; }
 }
 
@@ -29,12 +32,17 @@ public enum UserRole
 
 public enum AccountType
 {
-    Learning = 1, Teaching = 2
+    Normal = 1, Premium = 2
+}
+
+public enum TypeOfPremium
+{
+  Monthly = 1, HalfYear = 2 , Yearly = 3
 }
 
 public enum UserStatus
 {
-    Active = 1, InActive = 2 
+    Active = 1, InActive = 2
 }
 
 public class UserConfig : IEntityTypeConfiguration<User>
@@ -51,6 +59,8 @@ public class UserConfig : IEntityTypeConfiguration<User>
         builder.Property(x => x.Salt).IsRequired(false);
         builder.Property(x => x.FirstLoginAt).IsRequired(false);
         builder.Property(x => x.LastLoginAt).IsRequired(false);
-        builder.Property(x => x.AccountType).IsRequired().HasDefaultValue(AccountType.Learning);
+        builder.Property(x => x.ActivePremiumDate).IsRequired(false);
+        builder.Property(x => x.TypeOfPremium).IsRequired(false);
+        builder.Property(x => x.AccountType).IsRequired().HasDefaultValue(AccountType.Normal);
     }
 }

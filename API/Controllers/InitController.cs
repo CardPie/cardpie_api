@@ -8,7 +8,7 @@ namespace API.Controllers;
 
 public class InitController : BaseController
 {
-    
+
     private readonly MainUnitOfWork _unitOfWork;
 
     public InitController(MainUnitOfWork unitOfWork)
@@ -24,10 +24,10 @@ public class InitController : BaseController
         var user = new User
         {
             Id = Guid.NewGuid(),
-            Email = "doannh@gmail.com",
+            Email = "quynhnh@gmail.com",
             Address = "Thu Duc, TP Ho Chi Minh",
-            Fullname = "Nguyen Huu Doan",
-            Password = SecurityExtension.HashPassword<User>("covarom", salt),
+            Fullname = "Nguyen Truong Giang",
+            Password = SecurityExtension.HashPassword<User>("Quynh123@", salt),
             Role = UserRole.Admin,
             Salt = salt,
             Status = UserStatus.Active,

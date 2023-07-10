@@ -106,7 +106,7 @@ namespace MainData.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Decks", (string)null);
+                    b.ToTable("Decks");
                 });
 
             modelBuilder.Entity("MainData.Entities.FlashCard", b =>
@@ -163,7 +163,7 @@ namespace MainData.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("FlashCards", (string)null);
+                    b.ToTable("FlashCards");
                 });
 
             modelBuilder.Entity("MainData.Entities.Folder", b =>
@@ -196,7 +196,7 @@ namespace MainData.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Folders", (string)null);
+                    b.ToTable("Folders");
                 });
 
             modelBuilder.Entity("MainData.Entities.Interaction", b =>
@@ -229,12 +229,9 @@ namespace MainData.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("char(36)");
-
                     b.HasKey("Id");
 
-                    b.ToTable("Interactions", (string)null);
+                    b.ToTable("Interactions");
                 });
 
             modelBuilder.Entity("MainData.Entities.Post", b =>
@@ -277,12 +274,9 @@ namespace MainData.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("char(36)");
-
                     b.HasKey("Id");
 
-                    b.ToTable("Posts", (string)null);
+                    b.ToTable("Posts");
                 });
 
             modelBuilder.Entity("MainData.Entities.SavedDeck", b =>
@@ -314,7 +308,7 @@ namespace MainData.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("SavedDecks", (string)null);
+                    b.ToTable("SavedDecks");
                 });
 
             modelBuilder.Entity("MainData.Entities.StudySession", b =>
@@ -370,7 +364,7 @@ namespace MainData.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("StudySessions", (string)null);
+                    b.ToTable("StudySessions");
                 });
 
             modelBuilder.Entity("MainData.Entities.Token", b =>
@@ -419,7 +413,7 @@ namespace MainData.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tokens", (string)null);
+                    b.ToTable("Tokens");
                 });
 
             modelBuilder.Entity("MainData.Entities.User", b =>
@@ -428,11 +422,21 @@ namespace MainData.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
+                    b.Property<int>("AccountType")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
+
+                    b.Property<DateTime?>("ActivePremiumDate")
+                        .HasColumnType("datetime(6)");
+
                     b.Property<string>("Address")
                         .HasColumnType("longtext");
 
                     b.Property<string>("Avatar")
-                        .HasColumnType("longtext");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("longtext")
+                        .HasDefaultValue("https://i.pinimg.com/564x/76/68/4a/76684ac1fccf120998c15dcc094a07ad.jpg");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
@@ -473,17 +477,15 @@ namespace MainData.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
+                    b.Property<int?>("TypeOfPremium")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
-
                     b.HasKey("Id");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 #pragma warning restore 612, 618
         }
