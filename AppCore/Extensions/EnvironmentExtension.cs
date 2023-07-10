@@ -17,7 +17,7 @@ namespace AppCore.Extensions
         }
 
         // ==================================== GLOBAL ======================================
-        
+
         // ================ CONTAINS SOME STUPID SECURITY HANDMADE METHOD  ==================
         public static string GetAppLogFolder() =>
             Configuration["AppSettings:LOG_FOLDER"] ?? "Logs";
@@ -33,13 +33,13 @@ namespace AppCore.Extensions
         public static string GetAppConnectionString()
         {
             var hashedConnectionString = Configuration["AppSettings:CONNECTION_STRING"] ?? string.Empty;
-
-            return EncryptDecrypt.Decrypt(hashedConnectionString);
+            return hashedConnectionString;
+            //return EncryptDecrypt.Decrypt(hashedConnectionString);
         }
-        
+
         public static string GetPath() =>
             Configuration["AppSettings:DOMAIN_PATH"] ?? string.Empty;
-        
+
         public static string GetJwtIssuer() =>
             Configuration["AppSettings:JWT_ISSUER"] ?? string.Empty;
 
@@ -76,7 +76,7 @@ namespace AppCore.Extensions
         public static string GetGoogleClientSecret()
         {
             var hashedGoogleClientSecret = Configuration["AppSettings:GOOGLE_CLIENT_SECRET"] ?? string.Empty;
-            
+
             return EncryptDecrypt.Decrypt(hashedGoogleClientSecret);
         }
     }

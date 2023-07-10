@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MainData.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20230523035453_u2")]
-    partial class u2
+    [Migration("20230624081420_u1")]
+    partial class u1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -45,6 +45,9 @@ namespace MainData.Migrations
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("longtext");
+
+                    b.Property<Guid?>("EditorId")
+                        .HasColumnType("char(36)");
 
                     b.Property<Guid>("FolderId")
                         .ValueGeneratedOnAdd()
@@ -115,15 +118,17 @@ namespace MainData.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<string>("Content")
+                    b.Property<string>("BackContent")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("ContentBackOne")
-                        .IsRequired()
+                    b.Property<string>("BackDescription")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("ContentBackTwo")
+                    b.Property<string>("BackImageUrl")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("BackSoundUrl")
                         .HasColumnType("longtext");
 
                     b.Property<DateTime>("CreatedAt")
@@ -140,28 +145,20 @@ namespace MainData.Migrations
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<string>("ImageUrl")
-                        .HasColumnType("longtext");
+                    b.Property<Guid?>("EditorId")
+                        .HasColumnType("char(36)");
 
-                    b.Property<string>("ImageUrlBack")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("SoundUrl")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("SoundUrlBack")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Title")
+                    b.Property<string>("FrontContent")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("TitleBackOne")
-                        .IsRequired()
+                    b.Property<string>("FrontDescription")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("TitleBackTwo")
-                        .IsRequired()
+                    b.Property<string>("FrontImageUrl")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("FrontSoundUrl")
                         .HasColumnType("longtext");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -186,6 +183,9 @@ namespace MainData.Migrations
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<Guid?>("EditorId")
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("FolderName")
                         .IsRequired()
@@ -220,6 +220,9 @@ namespace MainData.Migrations
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<Guid?>("EditorId")
+                        .HasColumnType("char(36)");
+
                     b.Property<Guid>("PostId")
                         .HasColumnType("char(36)");
 
@@ -228,9 +231,6 @@ namespace MainData.Migrations
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("char(36)");
 
                     b.HasKey("Id");
 
@@ -253,11 +253,14 @@ namespace MainData.Migrations
                     b.Property<Guid?>("CreatorId")
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid?>("DeckId")
-                        .HasColumnType("char(36)");
-
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<Guid?>("EditorId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid?>("FolderId")
+                        .HasColumnType("char(36)");
 
                     b.Property<int>("Like")
                         .HasColumnType("int");
@@ -273,9 +276,6 @@ namespace MainData.Migrations
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("char(36)");
 
                     b.HasKey("Id");
 
@@ -300,14 +300,14 @@ namespace MainData.Migrations
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<Guid?>("EditorId")
+                        .HasColumnType("char(36)");
+
                     b.Property<string>("Note")
                         .HasColumnType("longtext");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("char(36)");
 
                     b.HasKey("Id");
 
@@ -341,6 +341,9 @@ namespace MainData.Migrations
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<Guid?>("EditorId")
+                        .HasColumnType("char(36)");
 
                     b.Property<DateTime?>("EndTime")
                         .HasColumnType("datetime(6)");
@@ -389,6 +392,9 @@ namespace MainData.Migrations
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<Guid?>("EditorId")
+                        .HasColumnType("char(36)");
+
                     b.Property<DateTime>("RefreshExpiredAt")
                         .HasColumnType("datetime(6)");
 
@@ -419,11 +425,18 @@ namespace MainData.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
+                    b.Property<int>("AccountType")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
+
                     b.Property<string>("Address")
                         .HasColumnType("longtext");
 
                     b.Property<string>("Avatar")
-                        .HasColumnType("longtext");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("longtext")
+                        .HasDefaultValue("https://i.pinimg.com/564x/76/68/4a/76684ac1fccf120998c15dcc094a07ad.jpg");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
@@ -433,6 +446,9 @@ namespace MainData.Migrations
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<Guid?>("EditorId")
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("Email")
                         .HasColumnType("longtext");
@@ -463,11 +479,6 @@ namespace MainData.Migrations
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
 
                     b.HasKey("Id");
 
