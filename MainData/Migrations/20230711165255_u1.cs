@@ -244,6 +244,8 @@ namespace MainData.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Salt = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
+                    ActivePremiumDate = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    TypeOfPremium = table.Column<int>(type: "int", nullable: true),
                     FirstLoginAt = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     LastLoginAt = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     CreatorId = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),

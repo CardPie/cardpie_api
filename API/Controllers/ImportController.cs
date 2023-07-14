@@ -21,4 +21,11 @@ public class ImportController : BaseController
     {
         return await _importService.ImportDeck(formFile);
     }
+    
+    [SwaggerOperation("Import user")]
+    [HttpPost("user")]
+    public async Task<ApiResponse> ImportUser(IFormFile formFile)
+    {
+        return await _importService.ImportUser(formFile);
+    }
 }

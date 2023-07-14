@@ -11,6 +11,8 @@ namespace API.Services;
 public interface IImportService : IBaseService
 {
     public Task<ApiResponse> ImportDeck(IFormFile formFile);
+    
+    public Task<ApiResponse> ImportUser(IFormFile formFile);
 }
 
 public class ImportService : BaseService, IImportService
@@ -45,6 +47,36 @@ public class ImportService : BaseService, IImportService
         
         if (!await MainUnitOfWork.FlashCardRepository.InsertAsync(cards, AccountId, CurrentDate))
             throw new ApiException("Import cards fail", StatusCode.SERVER_ERROR);
+
+        return ApiResponse.Success();
+    }
+
+    public async Task<ApiResponse> ImportUser(IFormFile formFile)
+    {
+        if (formFile == null)
+            throw new ApiException("Not recognize file");
+        string[] extensions = { ".xlsx", ".xls" };
+        if (!extensions.Contains(Path.GetExtension(formFile.FileName)))
+            throw new ApiException("Not supported file extension");
+        
+        var usersReader = ExcelReader.UserReader(formFile.OpenReadStream());
+
+        var users = usersReader.ToList().ProjectTo<ImportUserReaderDto, User>();
+
+        foreach (var user in users)
+        {
+            var salt = SecurityExtension.GenerateSalt();
+            user.Id = Guid.NewGuid();
+            user.Address = "Ho Chi Minh";
+            user.Password = SecurityExtension.HashPassword<User>(user.Password!, salt);
+            user.Role = UserRole.Member;
+            user.Salt = salt;
+            user.Status = UserStatus.Active;
+            user.AccountType = AccountType.Normal;
+        }
+
+        if (!await MainUnitOfWork.UserRepository.InsertAsync(users, AccountId, CurrentDate))
+            throw new ApiException("import failed", StatusCode.SERVER_ERROR);
 
         return ApiResponse.Success();
     }

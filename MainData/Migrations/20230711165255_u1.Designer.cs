@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MainData.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20230624081420_u1")]
+    [Migration("20230711165255_u1")]
     partial class u1
     {
         /// <inheritdoc />
@@ -430,6 +430,9 @@ namespace MainData.Migrations
                         .HasColumnType("int")
                         .HasDefaultValue(1);
 
+                    b.Property<DateTime?>("ActivePremiumDate")
+                        .HasColumnType("datetime(6)");
+
                     b.Property<string>("Address")
                         .HasColumnType("longtext");
 
@@ -475,6 +478,9 @@ namespace MainData.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TypeOfPremium")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")

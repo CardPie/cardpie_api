@@ -48,4 +48,37 @@ public static class ExcelReader
             throw new ApiException(exception.Message);
         }
     }
+    
+    
+    public static IEnumerable<ImportUserReaderDto> UserReader(Stream formStream)
+    {
+        var users = new List<ImportUserReaderDto>();
+
+        try
+        {
+            using (var workBook = new XLWorkbook(formStream))
+            {
+                var worksheet = workBook.Worksheet(1);
+
+                // Read card data starting from the third row
+                var nonEmptyDataRows = worksheet.RowsUsed().Skip(1);
+                foreach (var dataRow in nonEmptyDataRows)
+                {
+                    users.Add(new ImportUserReaderDto
+                    {
+                        Fullname = dataRow.Cell(1).Value.ToString().Trim(),
+                        Email = dataRow.Cell(2).Value.ToString()?.Trim(),
+                        Password = dataRow.Cell(3).Value.ToString().Trim(),
+                        PhoneNumber = dataRow.Cell(4).Value.ToString().Trim()
+                    });
+                }
+            }
+
+            return users;
+        }
+        catch (Exception exception)
+        {
+            throw new ApiException(exception.Message);
+        }
+    }
 }
