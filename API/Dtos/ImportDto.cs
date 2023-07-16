@@ -16,3 +16,11 @@ public class ImportCardReaderDto
     public string? FrontDescription { get; set; } = string.Empty;
     public string BackContent { get; set; } = string.Empty;
 }
+
+public class ImportUserReaderDto
+{
+    public string? Fullname { get; set; } = string.Empty;
+    public string? Email { get; set; }
+    public string? Password { get; set; } = string.Empty;
+    public string? PhoneNumber { get; set; }
+}
