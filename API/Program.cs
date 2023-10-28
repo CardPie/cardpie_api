@@ -12,9 +12,12 @@ builder.Services.AddDbContext<DatabaseContext>(options =>
 {
     
     var connectString = EnvironmentExtension.GetAppConnectionString();
-    options.UseMySql(connectString, ServerVersion.AutoDetect(connectString), b =>
-    {
-    });
+    options.UseSqlServer(connectString,
+        b =>
+        {
+            b.CommandTimeout(1200);
+        }
+    );
 });
 
 //

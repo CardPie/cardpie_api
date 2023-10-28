@@ -33,8 +33,8 @@ namespace AppCore.Extensions
         public static string GetAppConnectionString()
         {
             var hashedConnectionString = Configuration["AppSettings:CONNECTION_STRING"] ?? string.Empty;
-            //return hashedConnectionString;
-            return EncryptDecrypt.Decrypt(hashedConnectionString);
+            return hashedConnectionString;
+            //return EncryptDecrypt.Decrypt(hashedConnectionString);
         }
 
         public static string GetPath() =>
